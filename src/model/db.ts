@@ -13,6 +13,7 @@ import {
 import { Mutex } from "async-mutex";
 
 const messageMutex = new Mutex();
+const conversationMutex = new Mutex();
 
 export interface Conversation {
   id?: number;
@@ -91,38 +92,40 @@ function clean(conversationTopic: string): string {
 export async function saveConversation(
   xmtpConversation: XMTP.Conversation
 ): Promise<Conversation> {
-  const existing = await db.conversations
-    .where("topic")
-    .equals(clean(xmtpConversation.topic))
-    .first();
+  return await conversationMutex.runExclusive(async () => {
+    const existing = await db.conversations
+      .where("topic")
+      .equals(clean(xmtpConversation.topic))
+      .first();
 
-  if (existing) {
-    return existing;
-  }
-
-  const conversation: Conversation = {
-    topic: clean(xmtpConversation.topic),
-    title: xmtpConversation.peerAddress,
-    createdAt: xmtpConversation.createdAt,
-    updatedAt: xmtpConversation.createdAt,
-    isGroup: xmtpConversation.isGroup,
-  };
-
-  if (conversation.isGroup) {
-    const groupMembers = (
-      xmtpConversation.context?.metadata.initialMembers || ""
-    ).split(",");
-
-    if (groupMembers.length > 1) {
-      conversation.groupMembers = groupMembers;
-    } else {
-      throw new Error("group conversation does not have members");
+    if (existing) {
+      return existing;
     }
-  }
 
-  conversation.id = await db.conversations.add(conversation);
+    const conversation: Conversation = {
+      topic: clean(xmtpConversation.topic),
+      title: xmtpConversation.peerAddress,
+      createdAt: xmtpConversation.createdAt,
+      updatedAt: xmtpConversation.createdAt,
+      isGroup: xmtpConversation.isGroup,
+    };
 
-  return conversation;
+    if (conversation.isGroup) {
+      const groupMembers = (
+        xmtpConversation.context?.metadata.initialMembers || ""
+      ).split(",");
+
+      if (groupMembers.length > 1) {
+        conversation.groupMembers = groupMembers;
+      } else {
+        throw new Error("group conversation does not have members");
+      }
+    }
+
+    conversation.id = await db.conversations.add(conversation);
+
+    return conversation;
+  });
 }
 
 export async function findConversation(
@@ -139,6 +142,16 @@ export function useConversations(
       if (!client) return;
 
       for (const conversation of await client.conversations.list()) {
+        await saveConversation(conversation);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!client) return;
+
+      for await (const conversation of await client.conversations.stream()) {
         await saveConversation(conversation);
       }
     })();
