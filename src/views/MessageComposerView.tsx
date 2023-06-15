@@ -1,8 +1,8 @@
 import { FormEvent, ReactElement, createRef, useRef } from "react";
 import Button from "../components/Button";
-import { useConversation } from "../hooks/useConversation";
 import { useClient } from "../hooks/useClient";
-import { Conversation, getXMTPConversation, sendMessage } from "../model/db";
+import { Conversation } from "../model/db";
+import { sendMessage } from "../model/messages";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 
 export default function MessageComposerView({
@@ -11,6 +11,7 @@ export default function MessageComposerView({
   conversation: Conversation;
 }): ReactElement {
   const textField = createRef<HTMLInputElement>();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const client = useClient()!;
 
   function onSubmit(e: FormEvent) {
@@ -26,7 +27,7 @@ export default function MessageComposerView({
   }
 
   return (
-    <div className="fixed left-0 right-0 bottom-0 p-4">
+    <div className="fixed left-0 right-0 bottom-0 p-4 bg-white dark:bg-zinc-900">
       <form className="flex space-x-4" onSubmit={onSubmit}>
         <input
           type="text"

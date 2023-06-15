@@ -13,7 +13,7 @@ type ClientContextValue = {
 
 export const ClientContext = createContext<ClientContextValue>({
   client: null,
-  setClient: (_: Client) => {
+  setClient: () => {
     return;
   },
 });

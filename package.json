@@ -16,9 +16,11 @@
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.6",
     "ethers": "^5.5.3",
+    "javascript-time-ago": "^2.5.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.13.0",
+    "react-time-ago": "^7.2.1",
     "xmtp-content-type-remote-attachment": "^1.0.7"
   },
   "devDependencies": {

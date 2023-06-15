@@ -2,6 +2,9 @@ import { ReactElement, useState } from "react";
 import ConversationListView from "./ConversationListView";
 import { useClient } from "../hooks/useClient";
 import { shortAddress } from "../util/shortAddress";
+import Button from "../components/Button";
+import { Link } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function HomeView(): ReactElement {
   const client = useClient()!;
@@ -16,14 +19,19 @@ export default function HomeView(): ReactElement {
   }
 
   return (
-    <div className="p-4">
-      <small>
+    <div className="p-4 pt-14">
+      <Header>
         Hi {shortAddress(client.address)}{" "}
         <button className="text-xs text-zinc-600" onClick={copy}>
           {copied ? "Copied!" : "Copy"}
         </button>
         <br />
-        Here are your conversations:
+      </Header>
+      <small className="flex justify-between">
+        <span>Here are your conversations:</span>
+        <Link to="new" className="text-blue-700">
+          Make a new one
+        </Link>
       </small>
       <ConversationListView />
     </div>

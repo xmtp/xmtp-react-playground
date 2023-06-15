@@ -5,8 +5,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import ClientProvider from "./contexts/ClientContext.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { findConversation } from "./model/db.ts";
+import { findConversation } from "./model/conversations";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
+import NewConversationView from "./views/NewConversationView.tsx";
 
 async function conversationLoader({ params }: any) {
   const conversation = await findConversation(params.conversationTopic);
@@ -23,6 +24,10 @@ const router = createBrowserRouter(
       path: "c/:conversationTopic",
       element: <ConversationViewWithLoader />,
       loader: conversationLoader,
+    },
+    {
+      path: "new",
+      element: <NewConversationView />,
     },
   ],
   { basename: import.meta.env.DEV ? "" : "/xmtp-quickstart-react" }

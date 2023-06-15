@@ -1,9 +1,10 @@
 import { ReactElement, useEffect } from "react";
-import { Conversation, useMessages } from "../model/db";
+import { Conversation } from "../model/db";
+import { useMessages } from "../model/messages";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
-import { useSetConversation } from "../hooks/useConversation";
 import { Link } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function ConversationView({
   conversation,
@@ -11,20 +12,21 @@ export default function ConversationView({
   conversation: Conversation;
 }): ReactElement {
   const messages = useMessages(conversation);
-  const setConversation = useSetConversation();
 
   useEffect(() => {
-    window.scrollTo({ top: 100000 });
+    window.scrollTo({ top: 100000, behavior: "smooth" });
   }, [messages?.length]);
 
   return (
-    <div className="p-4 pb-20">
-      <small className="text-sm bold">
-        {conversation.title}{" "}
-        <Link className="text-blue-600" to="/">
-          Go Back
-        </Link>
-      </small>
+    <div className="p-4 pb-20 pt-14">
+      <Header>
+        <div className="flex justify-between">
+          <div>{conversation.title}</div>
+          <Link className="text-blue-700" to="/">
+            Go Back
+          </Link>
+        </div>
+      </Header>
       <div>
         {messages?.length == 0 && <p>No messages yet.</p>}
         {messages ? (

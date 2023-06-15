@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
-import { Message, MessageAttachment, useAttachment } from "../model/db";
+import { Message, MessageAttachment } from "../model/db";
+import { useAttachment } from "../model/attachments";
 import { shortAddress } from "../util/shortAddress";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 import {
@@ -55,7 +56,10 @@ export default function MessageCellView({
 }): ReactElement {
   return (
     <div className="flex mb-1">
-      <span className={message.sentByMe ? "text-zinc-500" : "text-green-500"}>
+      <span
+        title={message.sentByMe ? "You" : message.senderAddress}
+        className={message.sentByMe ? "text-zinc-500" : "text-green-500"}
+      >
         {shortAddress(message.senderAddress)}:
       </span>
       <div className="ml-2">

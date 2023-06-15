@@ -1,35 +1,25 @@
 import { ReactElement } from "react";
-import { Conversation, useConversations } from "../model/db";
+import { useConversations } from "../model/conversations";
 import { useClient } from "../hooks/useClient";
 import { Link } from "react-router-dom";
-import { shortAddress } from "../util/shortAddress";
-
-function ConversationCellView({
-  conversation,
-}: {
-  conversation: Conversation;
-}): ReactElement {
-  return (
-    <div className="flex items-center space-x-2">
-      <span className="text-blue-700">{shortAddress(conversation.title)}</span>{" "}
-      <span className="text-xs text-zinc-600 font-bold dark:bg-zinc-800 bg-zinc-200 rounded p-0.5">
-        {conversation.isGroup ? "Group Chat" : "1:1"}
-      </span>
-    </div>
-  );
-}
+import { useLatestMessages } from "../model/messages";
+import ConversationCellView from "./ConversationCellView";
 
 export default function ConversationListView(): ReactElement {
   const client = useClient();
   const conversations = useConversations(client);
+  const latestMesssages = useLatestMessages(conversations);
 
   return (
     <div>
       {conversations?.length == 0 && <p>No conversations yet.</p>}
       {conversations
-        ? conversations.map((conversation) => (
+        ? conversations.map((conversation, i) => (
             <Link to={`c/${conversation.topic}`} key={conversation.topic}>
-              <ConversationCellView conversation={conversation} />
+              <ConversationCellView
+                conversation={conversation}
+                latestMessage={latestMesssages[i]}
+              />
             </Link>
           ))
         : "Could not load conversations"}
