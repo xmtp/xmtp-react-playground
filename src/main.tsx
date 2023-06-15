@@ -13,17 +13,20 @@ async function conversationLoader({ params }: any) {
   return { conversation };
 }
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "c/:conversationTopic",
-    element: <ConversationViewWithLoader />,
-    loader: conversationLoader,
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+    },
+    {
+      path: "c/:conversationTopic",
+      element: <ConversationViewWithLoader />,
+      loader: conversationLoader,
+    },
+  ],
+  { basename: "/xmtp-quickstart-react" }
+);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
