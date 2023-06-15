@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import * as XMTP from "@xmtp/xmtp-js";
 import db from "./db";
 import { Mutex } from "async-mutex";
+import { saveMessage } from "./messages";
 
 const conversationMutex = new Mutex();
 
@@ -29,13 +30,43 @@ export async function findConversation(
   return await db.conversations.where("topic").equals(clean(topic)).first();
 }
 
+export async function updateConversationTimestamp(
+  topic: string,
+  updatedAt: Date
+) {
+  const conversation = await db.conversations
+    .where("topic")
+    .equals(topic)
+    .first();
+
+  if (conversation && conversation.updatedAt < updatedAt) {
+    await conversationMutex.runExclusive(async () => {
+      await db.conversations.update(conversation, { updatedAt });
+    });
+  }
+}
+
 export function useConversations(client: XMTP.Client | null): Conversation[] {
   useEffect(() => {
     (async () => {
       if (!client) return;
 
-      for (const conversation of await client.conversations.list()) {
-        await saveConversation(conversation);
+      for (const xmtpConversation of await client.conversations.list()) {
+        const conversation = await saveConversation(xmtpConversation);
+
+        // Load latest message from network for preview
+        (async () => {
+          const latestMessage = (
+            await xmtpConversation.messages({
+              direction: XMTP.SortDirection.SORT_DIRECTION_DESCENDING,
+              limit: 1,
+            })
+          )[0];
+
+          if (latestMessage) {
+            await saveMessage(client, latestMessage);
+          }
+        })();
       }
     })();
   }, []);

@@ -1,5 +1,9 @@
 import db, { Conversation, Message, MessageAttachment } from "./db";
-import { getXMTPConversation, clean } from "./conversations";
+import {
+  getXMTPConversation,
+  clean,
+  updateConversationTimestamp,
+} from "./conversations";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "../hooks/useClient";
@@ -26,12 +30,13 @@ export function useLatestMessages(
     useLiveQuery(async () => {
       return await Promise.all(
         conversations.map(async (conversation) => {
-          return await db.messages
-            .where("conversationTopic")
-            .equals(conversation.topic)
-            .limit(1)
-            .reverse()
-            .first();
+          return (
+            await db.messages
+              .where("conversationTopic")
+              .equals(conversation.topic)
+              .reverse()
+              .sortBy("sentAt")
+          )[0];
         })
       );
     }, [
@@ -84,7 +89,7 @@ export async function sendMessage(
   return message;
 }
 
-async function saveMessage(
+export async function saveMessage(
   client: XMTP.Client,
   decodedMessage: XMTP.DecodedMessage
 ): Promise<Message> {
@@ -120,6 +125,11 @@ async function saveMessage(
       decodedMessage.contentType,
       decodedMessage.content,
       client
+    );
+
+    await updateConversationTimestamp(
+      message.conversationTopic,
+      message.sentAt
     );
 
     return message;
@@ -166,21 +176,6 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
       const xmtpConversation = await getXMTPConversation(client, conversation);
       for (const message of await xmtpConversation.messages()) {
         saveMessage(client, message);
-      }
-
-      const latestMessage = (
-        await db.messages
-          .where("conversationTopic")
-          .equals(conversation.topic)
-          .limit(1)
-          .reverse()
-          .sortBy("sentAt")
-      )[0];
-
-      if (latestMessage) {
-        await db.conversations.update(conversation, {
-          updatedAt: latestMessage.sentAt,
-        });
       }
 
       for await (const message of await xmtpConversation.streamMessages()) {
