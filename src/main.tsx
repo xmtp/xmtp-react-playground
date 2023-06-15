@@ -25,7 +25,7 @@ const router = createBrowserRouter(
       loader: conversationLoader,
     },
   ],
-  { basename: "/xmtp-quickstart-react" }
+  { basename: import.meta.env.DEV ? "" : "/xmtp-quickstart-react" }
 );
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
