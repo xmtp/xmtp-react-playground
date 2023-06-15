@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Conversation, useConversations } from "../db/db";
+import { Conversation, useConversations } from "../model/db";
 import { useClient } from "../hooks/useClient";
 import { Link } from "react-router-dom";
 import { shortAddress } from "../util/shortAddress";

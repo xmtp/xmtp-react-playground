@@ -1,5 +1,5 @@
 import { createContext, useState, ReactElement } from "react";
-import { Conversation } from "../db/db";
+import { Conversation } from "../model/db";
 
 type ConversationContextValue = {
   conversation: Conversation | null;

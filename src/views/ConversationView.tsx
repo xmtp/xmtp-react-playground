@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from "react";
-import { Conversation, useMessages } from "../db/db";
+import { Conversation, useMessages } from "../model/db";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
 import { useSetConversation } from "../hooks/useConversation";

@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Message } from "../db/db";
+import { Message } from "../model/db";
 import { shortAddress } from "../util/shortAddress";
 
 export default function MessageCellView({
@@ -9,8 +9,8 @@ export default function MessageCellView({
 }): ReactElement {
   return (
     <div>
-      <span className="text-zinc-500">
-        {shortAddress(message.senderAddress)}:
+      <span className={message.sentByMe ? "text-zinc-500" : "text-green-500"}>
+        {shortAddress(message.senderAddress)}
       </span>{" "}
       {message.text}
     </div>

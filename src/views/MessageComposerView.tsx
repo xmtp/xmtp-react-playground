@@ -2,7 +2,7 @@ import { FormEvent, ReactElement, createRef, useRef } from "react";
 import Button from "../components/Button";
 import { useConversation } from "../hooks/useConversation";
 import { useClient } from "../hooks/useClient";
-import { Conversation, getXMTPConversation, sendMessage } from "../db/db";
+import { Conversation, getXMTPConversation, sendMessage } from "../model/db";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 
 export default function MessageComposerView({

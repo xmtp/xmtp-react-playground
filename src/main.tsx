@@ -5,7 +5,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import ClientProvider from "./contexts/ClientContext.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { findConversation } from "./db/db.ts";
+import { findConversation } from "./model/db.ts";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 
 async function conversationLoader({ params }: any) {
