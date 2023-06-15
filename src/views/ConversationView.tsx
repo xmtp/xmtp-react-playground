@@ -13,8 +13,12 @@ export default function ConversationView({
   const messages = useMessages(conversation);
   const setConversation = useSetConversation();
 
+  useEffect(() => {
+    window.scrollTo({ top: 100000 });
+  }, [messages?.length]);
+
   return (
-    <div className="p-4">
+    <div className="p-4 pb-20">
       <small className="text-sm bold">
         {conversation.title}{" "}
         <Link className="text-blue-600" to="/">

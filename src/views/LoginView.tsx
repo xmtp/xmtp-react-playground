@@ -3,6 +3,10 @@ import Button from "../components/Button";
 import { useClient, useSetClient } from "../hooks/useClient";
 import { Wallet } from "ethers";
 import { Client } from "@xmtp/xmtp-js";
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from "xmtp-content-type-remote-attachment";
 
 export default function LoginView(): ReactElement {
   const setClient = useSetClient();
@@ -17,6 +21,8 @@ export default function LoginView(): ReactElement {
     localStorage.setItem("_insecurePrivateKey", wallet.privateKey);
 
     client.enableGroupChat();
+    client.registerCodec(new AttachmentCodec());
+    client.registerCodec(new RemoteAttachmentCodec());
     setClient(client);
   }
 

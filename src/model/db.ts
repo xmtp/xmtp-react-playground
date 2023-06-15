@@ -72,7 +72,7 @@ class DB extends Dexie {
         text,
         contentType
         `,
-      messageAttachments: `
+      attachments: `
         ++id,
         messageID,
         filename,
@@ -159,6 +159,12 @@ export function useConversations(
 
   return useLiveQuery(async () => {
     return await db.conversations.toArray();
+  });
+}
+
+export function useAttachment(message: Message): MessageAttachment | undefined {
+  return useLiveQuery(async () => {
+    return await db.attachments.where("messageID").equals(message.id!).first();
   });
 }
 
@@ -268,7 +274,7 @@ async function persistAttachments(
   content: any,
   client: XMTP.Client
 ) {
-  if (contentType.sameAs(ContentTypeAttachment)) {
+  if (ContentTypeAttachment.sameAs(contentType)) {
     const attachment: Attachment = content;
     const messageAttachment: MessageAttachment = {
       messageID,
@@ -278,7 +284,7 @@ async function persistAttachments(
     await db.attachments.add(messageAttachment);
   }
 
-  if (contentType.sameAs(ContentTypeRemoteAttachment)) {
+  if (ContentTypeRemoteAttachment.sameAs(contentType)) {
     const remoteAttachment: RemoteAttachment = content;
     const attachment: Attachment = await RemoteAttachmentCodec.load(
       remoteAttachment,
@@ -297,8 +303,6 @@ async function persistAttachments(
 export function useMessages(conversation: Conversation): Message[] | undefined {
   const client = useClient()!;
 
-  console.log("useMessages called");
-
   useEffect(() => {
     (async () => {
       const xmtpConversation = await getXMTPConversation(client, conversation);
@@ -307,7 +311,6 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
       }
 
       for await (const message of await xmtpConversation.streamMessages()) {
-        console.log("streamed message received", message.id);
         await saveMessage(client, message);
       }
     })();

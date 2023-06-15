@@ -1,6 +1,10 @@
 import { Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import { createContext, useState, ReactElement, useEffect } from "react";
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from "xmtp-content-type-remote-attachment";
 
 type ClientContextValue = {
   client: Client | null;
@@ -37,6 +41,8 @@ export default function ClientProvider({
       });
 
       client.enableGroupChat();
+      client.registerCodec(new AttachmentCodec());
+      client.registerCodec(new RemoteAttachmentCodec());
 
       setClient(client);
       setIsLoading(false);
