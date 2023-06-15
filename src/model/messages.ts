@@ -22,10 +22,6 @@ const messageMutex = new Mutex();
 export function useLatestMessages(
   conversations: Conversation[]
 ): (Message | undefined)[] {
-  const [latestMessages, setLatestMessages] = useState<(Message | undefined)[]>(
-    []
-  );
-
   return (
     useLiveQuery(async () => {
       return await Promise.all(
