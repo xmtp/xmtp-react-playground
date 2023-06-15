@@ -23,7 +23,7 @@ export default function HomeView(): ReactElement {
       <Header>
         Hi {shortAddress(client.address)}{" "}
         <button className="text-xs text-zinc-600" onClick={copy}>
-          {copied ? "Copied!" : "Copy"}
+          {copied ? "Copied Address!" : "Copy Address"}
         </button>
         <br />
       </Header>

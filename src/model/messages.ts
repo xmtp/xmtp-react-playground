@@ -5,7 +5,7 @@ import {
   updateConversationTimestamp,
 } from "./conversations";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { useClient } from "../hooks/useClient";
 import * as XMTP from "@xmtp/xmtp-js";
 import {
