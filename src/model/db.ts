@@ -19,7 +19,6 @@ export interface Message {
   senderAddress: string;
   sentByMe: boolean;
   sentAt: Date;
-  text: string;
   contentType: {
     authorityId: string;
     typeId: string;
@@ -64,7 +63,6 @@ class DB extends Dexie {
         senderAddress,
         sentByMe,
         sentAt,
-        text,
         contentType,
         content
         `,

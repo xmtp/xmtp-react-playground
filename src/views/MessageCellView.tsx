@@ -54,7 +54,7 @@ function AttachmentContent(message: Message): ReactElement {
 
 export function Content({ message }: { message: Message }): ReactElement {
   if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
-    return <span>{message.text}</span>;
+    return <span>{message.content}</span>;
   }
 
   if (
