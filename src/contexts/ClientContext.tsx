@@ -8,7 +8,7 @@ import {
 
 type ClientContextValue = {
   client: Client | null;
-  setClient: (client: Client) => void;
+  setClient: (client: Client | null) => void;
 };
 
 export const ClientContext = createContext<ClientContextValue>({
