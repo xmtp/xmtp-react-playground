@@ -16,6 +16,7 @@ import {
   RemoteAttachmentCodec,
 } from "xmtp-content-type-remote-attachment";
 import { Mutex } from "async-mutex";
+import { upload } from "./attachments";
 
 const messageMutex = new Mutex();
 
@@ -55,7 +56,8 @@ export async function sendMessage(
     senderAddress: client.address,
     sentByMe: true,
     sentAt: new Date(),
-    contentType: contentType,
+    contentType: { ...contentType },
+    content: content,
     text: "",
     isSending: true,
   };
@@ -67,6 +69,18 @@ export async function sendMessage(
   message.id = await db.messages.add(message);
 
   await persistAttachments(message.id, contentType, content, client);
+  await processConversationStateChanges(
+    message.content,
+    message.contentType as XMTP.ContentTypeId,
+    conversation
+  );
+
+  // Always treat Attachments as remote attachments so we don't send
+  // huge messages to the network
+  if (contentType.sameAs(ContentTypeAttachment)) {
+    content = await upload(content);
+    contentType = ContentTypeRemoteAttachment;
+  }
 
   // Do the actual sending async
   (async () => {
@@ -87,6 +101,7 @@ export async function sendMessage(
 
 export async function saveMessage(
   client: XMTP.Client,
+  conversation: Conversation,
   decodedMessage: XMTP.DecodedMessage
 ): Promise<Message> {
   return await messageMutex.runExclusive(async () => {
@@ -105,12 +120,13 @@ export async function saveMessage(
       senderAddress: decodedMessage.senderAddress,
       sentByMe: decodedMessage.senderAddress == client.address,
       sentAt: decodedMessage.sent,
-      contentType: decodedMessage.contentType,
+      contentType: { ...decodedMessage.contentType },
+      content: decodedMessage.content,
       text: "",
       isSending: false,
     };
 
-    if (decodedMessage.contentType.sameAs(XMTP.ContentTypeText)) {
+    if (XMTP.ContentTypeText.sameAs(decodedMessage.contentType)) {
       message.text = decodedMessage.content;
     }
 
@@ -123,6 +139,12 @@ export async function saveMessage(
       client
     );
 
+    await processConversationStateChanges(
+      decodedMessage.content,
+      decodedMessage.contentType,
+      conversation
+    );
+
     await updateConversationTimestamp(
       message.conversationTopic,
       message.sentAt
@@ -130,6 +152,31 @@ export async function saveMessage(
 
     return message;
   });
+}
+
+async function processConversationStateChanges(
+  content: any,
+  contentType: XMTP.ContentTypeId,
+  conversation: Conversation
+) {
+  if (XMTP.ContentTypeGroupChatTitleChanged.sameAs(contentType)) {
+    const titleChanged: XMTP.GroupChatTitleChanged = content;
+
+    await db.conversations.update(conversation, {
+      title: titleChanged.newTitle,
+    });
+  }
+
+  if (XMTP.ContentTypeGroupChatMemberAdded.sameAs(contentType)) {
+    const memberAdded: XMTP.GroupChatMemberAdded = content;
+
+    const groupMembers = new Set(conversation.groupMembers);
+    groupMembers.add(memberAdded.member);
+
+    await db.conversations.update(conversation, {
+      groupMembers: Array.from(groupMembers),
+    });
+  }
 }
 
 async function persistAttachments(
@@ -171,11 +218,11 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
     (async () => {
       const xmtpConversation = await getXMTPConversation(client, conversation);
       for (const message of await xmtpConversation.messages()) {
-        saveMessage(client, message);
+        saveMessage(client, conversation, message);
       }
 
       for await (const message of await xmtpConversation.streamMessages()) {
-        await saveMessage(client, message);
+        await saveMessage(client, conversation, message);
       }
     })();
   });

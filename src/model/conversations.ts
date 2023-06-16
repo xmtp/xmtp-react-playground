@@ -8,6 +8,14 @@ import { saveMessage } from "./messages";
 
 const conversationMutex = new Mutex();
 
+// Keeps a conversation up to date with DB updates
+export function useLiveConversation(conversation: Conversation): Conversation {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return useLiveQuery(async () => {
+    return db.conversations.where("topic").equals(conversation.topic).first();
+  })!;
+}
+
 // TODO: figure out better way to turn db Conversation -> XMTP.Conversation
 export async function getXMTPConversation(
   client: XMTP.Client,
@@ -64,7 +72,7 @@ export function useConversations(client: XMTP.Client | null): Conversation[] {
           )[0];
 
           if (latestMessage) {
-            await saveMessage(client, latestMessage);
+            await saveMessage(client, conversation, latestMessage);
           }
         })();
       }
@@ -126,10 +134,11 @@ export async function saveConversation(
 
     const conversation: Conversation = {
       topic: clean(xmtpConversation.topic),
-      title: xmtpConversation.peerAddress,
+      title: undefined,
       createdAt: xmtpConversation.createdAt,
       updatedAt: xmtpConversation.createdAt,
       isGroup: xmtpConversation.isGroup,
+      peerAddress: xmtpConversation.peerAddress,
     };
 
     // TODO: Conversations streaming in don't have isGroup set properly

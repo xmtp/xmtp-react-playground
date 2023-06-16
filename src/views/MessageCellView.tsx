@@ -2,7 +2,14 @@ import { ReactElement } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../model/attachments";
 import { shortAddress } from "../util/shortAddress";
-import { ContentTypeText } from "@xmtp/xmtp-js";
+import {
+  ContentTypeGroupChatMemberAdded,
+  ContentTypeGroupChatTitleChanged,
+  ContentTypeId,
+  ContentTypeText,
+  GroupChatMemberAdded,
+  GroupChatTitleChanged,
+} from "@xmtp/xmtp-js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -16,7 +23,14 @@ function ImageAttachmentContent(attachment: MessageAttachment): ReactElement {
   );
 
   return (
-    <img className="rounded w-48" src={objectURL} title={attachment.filename} />
+    <img
+      onLoad={() => {
+        window.scroll({ top: 10000, behavior: "smooth" });
+      }}
+      className="rounded w-48"
+      src={objectURL}
+      title={attachment.filename}
+    />
   );
 }
 
@@ -27,21 +41,25 @@ function AttachmentContent(message: Message): ReactElement {
     return <span className="text-zinc-500">No attachment found.</span>;
   }
 
-  if (["image/png", "image/jpg", "image/gif"].includes(attachment.mimeType)) {
+  if (attachment.mimeType.startsWith("image/")) {
     return ImageAttachmentContent(attachment);
   }
 
-  return <span>{attachment.filename || "no filename?"}</span>;
+  return (
+    <span>
+      {attachment.mimeType} {attachment.filename || "no filename?"}
+    </span>
+  );
 }
 
 function Content({ message }: { message: Message }): ReactElement {
-  if (ContentTypeText.sameAs(message.contentType)) {
+  if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
     return <span>{message.text}</span>;
   }
 
   if (
-    ContentTypeAttachment.sameAs(message.contentType) ||
-    ContentTypeRemoteAttachment
+    ContentTypeAttachment.sameAs(message.contentType as ContentTypeId) ||
+    ContentTypeRemoteAttachment.sameAs(message.contentType as ContentTypeId)
   ) {
     return AttachmentContent(message);
   }
@@ -54,6 +72,32 @@ export default function MessageCellView({
 }: {
   message: Message;
 }): ReactElement {
+  if (
+    ContentTypeGroupChatTitleChanged.sameAs(
+      message.contentType as ContentTypeId
+    )
+  ) {
+    const titleChanged: GroupChatTitleChanged = message.content;
+    return (
+      <div className="text-zinc-500 mb-1">
+        {shortAddress(message.senderAddress)} changed the group title to{" "}
+        <b>{titleChanged.newTitle}</b>
+      </div>
+    );
+  }
+
+  if (
+    ContentTypeGroupChatMemberAdded.sameAs(message.contentType as ContentTypeId)
+  ) {
+    const memberAdded: GroupChatMemberAdded = message.content;
+    return (
+      <div className="text-zinc-500 mb-1">
+        {shortAddress(message.senderAddress)} added <b>{memberAdded.member}</b>{" "}
+        to the group
+      </div>
+    );
+  }
+
   return (
     <div className="flex mb-1">
       <span

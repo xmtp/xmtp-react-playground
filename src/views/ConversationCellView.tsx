@@ -11,11 +11,11 @@ export default function ConversationCellView({
   latestMessage: Message | undefined;
 }): ReactElement {
   return (
-    <div className="mt-2 p-2 border rounded">
+    <div className="mt-2 p-2 border dark:border-zinc-600 rounded">
       <div className="flex items-center justify-between space-x-2">
         <div className="hover:underline">
-          <span className="text-blue-700">
-            {shortAddress(conversation.title)}
+          <span className="text-blue-700 dark:text-blue-500">
+            {conversation.title || shortAddress(conversation.peerAddress)}
           </span>{" "}
           <span className="text-xs text-zinc-600 font-bold dark:bg-zinc-800 bg-zinc-200 rounded p-0.5">
             {conversation.isGroup ? "Group Chat" : "1:1"}

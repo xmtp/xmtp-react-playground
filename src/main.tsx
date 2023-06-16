@@ -1,5 +1,6 @@
 import "./polyfills";
 import "./index.css";
+import "@animxyz/core";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";

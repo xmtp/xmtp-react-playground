@@ -2,7 +2,6 @@ import { ReactElement, useState } from "react";
 import ConversationListView from "./ConversationListView";
 import { useClient } from "../hooks/useClient";
 import { shortAddress } from "../util/shortAddress";
-import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 

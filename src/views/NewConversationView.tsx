@@ -113,7 +113,7 @@ export default function NewConversationView(): ReactElement {
               autoFocus
               ref={addressInputRef}
               type="text"
-              className="border p-2 w-full md:w-1/2 rounded shadow-sm"
+              className="border p-2 w-full md:w-1/2 rounded shadow-sm dark:bg-black"
               placeholder="Enter an address"
             ></input>
           </label>

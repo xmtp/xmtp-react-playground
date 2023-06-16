@@ -4,10 +4,11 @@ import Dexie from "dexie";
 export interface Conversation {
   id?: number;
   topic: string;
-  title: string;
+  title: string | undefined;
   createdAt: Date;
   updatedAt: Date;
   isGroup: boolean;
+  peerAddress: string;
   groupMembers?: string[] | undefined;
 }
 
@@ -19,7 +20,14 @@ export interface Message {
   sentByMe: boolean;
   sentAt: Date;
   text: string;
-  contentType: XMTP.ContentTypeId;
+  contentType: {
+    authorityId: string;
+    typeId: string;
+    versionMajor: number;
+    versionMinor: number;
+  };
+  content: any;
+  metadata?: { [key: string]: [value: string] };
   isSending: boolean;
 }
 
@@ -46,7 +54,8 @@ class DB extends Dexie {
         createdAt,
         updatedAt,
         isGroup,
-        groupMembers
+        groupMembers,
+        peerAddress
         `,
       messages: `
         ++id,
@@ -56,7 +65,8 @@ class DB extends Dexie {
         sentByMe,
         sentAt,
         text,
-        contentType
+        contentType,
+        content
         `,
       attachments: `
         ++id,
