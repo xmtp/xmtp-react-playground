@@ -38,7 +38,7 @@ function AttachmentContent(message: Message): ReactElement {
   const attachment = useAttachment(message);
 
   if (!attachment) {
-    return <span className="text-zinc-500">No attachment found.</span>;
+    return <span className="text-zinc-500">Loading attachment…</span>;
   }
 
   if (attachment.mimeType.startsWith("image/")) {
