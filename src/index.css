@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Override RainbowKit button to look more like ours */
+.connect-button button {
+  border-radius: 0.375rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
 @keyframes horizontal-shaking {
   0% {
     transform: translateX(0)

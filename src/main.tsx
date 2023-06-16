@@ -5,14 +5,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import ClientProvider from "./contexts/ClientContext.tsx";
-import {
-  createBrowserRouter,
-  createHashRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { findConversation } from "./model/conversations";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 import NewConversationView from "./views/NewConversationView.tsx";
+import WalletContext from "./contexts/WalletContext.tsx";
 
 async function conversationLoader({ params }: any) {
   const conversation = await findConversation(params.conversationTopic);
@@ -41,7 +38,9 @@ const router = createHashRouter(
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ClientProvider>
-      <RouterProvider router={router} />
+      <WalletContext>
+        <RouterProvider router={router} />
+      </WalletContext>
     </ClientProvider>
   </React.StrictMode>
 );

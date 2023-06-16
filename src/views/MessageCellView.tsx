@@ -52,7 +52,7 @@ function AttachmentContent(message: Message): ReactElement {
   );
 }
 
-function Content({ message }: { message: Message }): ReactElement {
+export function Content({ message }: { message: Message }): ReactElement {
   if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
     return <span>{message.text}</span>;
   }
@@ -64,7 +64,11 @@ function Content({ message }: { message: Message }): ReactElement {
     return AttachmentContent(message);
   }
 
-  return <span>Who knows</span>;
+  return (
+    <span className="text-zinc-500">
+      Unknown content: {JSON.stringify(message.content)}
+    </span>
+  );
 }
 
 export default function MessageCellView({

@@ -3,10 +3,12 @@ import Button from "../components/Button";
 import { useClient, useSetClient } from "../hooks/useClient";
 import { Wallet } from "ethers";
 import { Client } from "@xmtp/xmtp-js";
+import "@rainbow-me/rainbowkit/styles.css";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "xmtp-content-type-remote-attachment";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function LoginView(): ReactElement {
   const setClient = useSetClient();
@@ -37,10 +39,17 @@ export default function LoginView(): ReactElement {
           <div className="mt-2 max-w-xl text-sm text-gray-500">
             <p>You can generate a wallet or do something else.</p>
           </div>
-          <div className="mt-5">
-            <Button type="button" onClick={generateWallet}>
+          <div className="mt-5 flex space-x-4">
+            <Button
+              type="button"
+              onClick={generateWallet}
+              className="rounded-lg"
+            >
               Generate Wallet
             </Button>
+            <div className="connect-button">
+              <ConnectButton />
+            </div>
           </div>
         </div>
       </div>

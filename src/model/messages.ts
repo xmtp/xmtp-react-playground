@@ -99,12 +99,21 @@ export async function sendMessage(
   return message;
 }
 
+async function nonMutex<T>(fn: () => Promise<T>) {
+  return await fn();
+}
+
 export async function saveMessage(
   client: XMTP.Client,
   conversation: Conversation,
-  decodedMessage: XMTP.DecodedMessage
+  decodedMessage: XMTP.DecodedMessage,
+  useMutex = true
 ): Promise<Message> {
-  return await messageMutex.runExclusive(async () => {
+  const runner = useMutex
+    ? messageMutex.runExclusive.bind(messageMutex)
+    : nonMutex;
+
+  return await runner(async () => {
     const existing = await db.messages
       .where("xmtpID")
       .equals(decodedMessage.id)
@@ -212,13 +221,14 @@ async function persistAttachments(
 }
 
 export function useMessages(conversation: Conversation): Message[] | undefined {
-  const client = useClient()!;
+  const client = useClient();
 
   useEffect(() => {
+    if (!client) return;
     (async () => {
       const xmtpConversation = await getXMTPConversation(client, conversation);
       for (const message of await xmtpConversation.messages()) {
-        saveMessage(client, conversation, message);
+        saveMessage(client, conversation, message, false);
       }
 
       for await (const message of await xmtpConversation.streamMessages()) {

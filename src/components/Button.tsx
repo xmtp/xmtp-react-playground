@@ -22,7 +22,7 @@ export default function Button({
     <button
       disabled={disabled}
       type={type}
-      className={`${className} ${buttonColor} inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm`}
+      className={`${buttonColor} inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${className}`}
       onClick={onClick}
     >
       {children}
