@@ -35,7 +35,7 @@ const router = createHashRouter(
       element: <NewConversationView />,
     },
   ],
-  { basename: import.meta.env.DEV ? "" : "/xmtp-quickstart-react" }
+  { basename: import.meta.env.DEV ? "" : "/xmtp-quickstart-react/" }
 );
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
