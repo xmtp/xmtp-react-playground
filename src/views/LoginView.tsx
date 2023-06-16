@@ -37,7 +37,7 @@ export default function LoginView(): ReactElement {
             Login
           </h3>
           <div className="mt-2 max-w-xl text-sm text-gray-500">
-            <p>You can generate a wallet or do something else.</p>
+            <p>You can generate a wallet or connect your own.</p>
           </div>
           <div className="mt-5 flex space-x-4">
             <Button
