@@ -5,7 +5,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import ClientProvider from "./contexts/ClientContext.tsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createHashRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { findConversation } from "./model/conversations";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 import NewConversationView from "./views/NewConversationView.tsx";
@@ -15,7 +19,7 @@ async function conversationLoader({ params }: any) {
   return { conversation };
 }
 
-const router = createBrowserRouter(
+const router = createHashRouter(
   [
     {
       path: "/",
