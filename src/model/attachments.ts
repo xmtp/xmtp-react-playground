@@ -4,8 +4,6 @@ import {
   RemoteAttachment,
   RemoteAttachmentCodec,
 } from "xmtp-content-type-remote-attachment";
-import db, { Message, MessageAttachment } from "./db";
-import { useLiveQuery } from "dexie-react-hooks";
 import { Web3Storage, Filelike } from "web3.storage";
 
 export default class Upload implements Filelike {
@@ -27,12 +25,6 @@ export default class Upload implements Filelike {
       },
     });
   }
-}
-
-export function useAttachment(message: Message): MessageAttachment | undefined {
-  return useLiveQuery(async () => {
-    return await db.attachments.where("messageID").equals(message.id!).first();
-  });
 }
 
 export async function upload(

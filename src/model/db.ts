@@ -1,4 +1,10 @@
-import * as XMTP from "@xmtp/xmtp-js";
+/*
+  DB.ts
+
+  This file defines the local database schema for our app. Any time we show any
+  data in the UI, it should come from the database.
+*/
+
 import Dexie from "dexie";
 
 export interface Conversation {

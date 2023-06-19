@@ -6,15 +6,8 @@ import db from "./db";
 import { Mutex } from "async-mutex";
 import { saveMessage } from "./messages";
 
+// Prevent races when updating the local database
 const conversationMutex = new Mutex();
-
-// Keeps a conversation up to date with DB updates
-export function useLiveConversation(conversation: Conversation): Conversation {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return useLiveQuery(async () => {
-    return db.conversations.where("topic").equals(conversation.topic).first();
-  })!;
-}
 
 // TODO: figure out better way to turn db Conversation -> XMTP.Conversation
 export async function getXMTPConversation(
@@ -23,7 +16,8 @@ export async function getXMTPConversation(
 ): Promise<XMTP.Conversation> {
   const conversations = await client.conversations.list();
   const xmtpConversation = conversations.find(
-    (xmtpConversation) => clean(xmtpConversation.topic) == conversation.topic
+    (xmtpConversation) =>
+      stripTopicName(xmtpConversation.topic) == conversation.topic
   );
 
   if (!xmtpConversation)
@@ -35,7 +29,10 @@ export async function getXMTPConversation(
 export async function findConversation(
   topic: string
 ): Promise<Conversation | undefined> {
-  return await db.conversations.where("topic").equals(clean(topic)).first();
+  return await db.conversations
+    .where("topic")
+    .equals(stripTopicName(topic))
+    .first();
 }
 
 export async function updateConversationTimestamp(
@@ -54,49 +51,7 @@ export async function updateConversationTimestamp(
   }
 }
 
-export function useConversations(client: XMTP.Client | null): Conversation[] {
-  useEffect(() => {
-    (async () => {
-      if (!client) return;
-
-      for (const xmtpConversation of await client.conversations.list()) {
-        const conversation = await saveConversation(xmtpConversation);
-
-        // Load latest message from network for preview
-        (async () => {
-          const latestMessage = (
-            await xmtpConversation.messages({
-              direction: XMTP.SortDirection.SORT_DIRECTION_DESCENDING,
-              limit: 1,
-            })
-          )[0];
-
-          if (latestMessage) {
-            await saveMessage(client, conversation, latestMessage);
-          }
-        })();
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!client) return;
-
-      for await (const conversation of await client.conversations.stream()) {
-        await saveConversation(conversation);
-      }
-    })();
-  }, []);
-
-  return (
-    useLiveQuery(async () => {
-      return await db.conversations.reverse().sortBy("updatedAt");
-    }) || []
-  );
-}
-
-export function clean(conversationTopic: string): string {
+export function stripTopicName(conversationTopic: string): string {
   return conversationTopic.replace("/xmtp/0/", "").replace("/proto", "");
 }
 
@@ -125,7 +80,7 @@ export async function saveConversation(
   return await conversationMutex.runExclusive(async () => {
     const existing = await db.conversations
       .where("topic")
-      .equals(clean(xmtpConversation.topic))
+      .equals(stripTopicName(xmtpConversation.topic))
       .first();
 
     if (existing) {
@@ -133,7 +88,7 @@ export async function saveConversation(
     }
 
     const conversation: Conversation = {
-      topic: clean(xmtpConversation.topic),
+      topic: stripTopicName(xmtpConversation.topic),
       title: undefined,
       createdAt: xmtpConversation.createdAt,
       updatedAt: xmtpConversation.createdAt,

@@ -1,0 +1,21 @@
+import { useEffect } from "react";
+import { useClient } from "./useClient";
+import { loadMessages } from "../model/messages";
+import db, { Conversation, Message } from "../model/db";
+import { useLiveQuery } from "dexie-react-hooks";
+
+export function useMessages(conversation: Conversation): Message[] | undefined {
+  const client = useClient();
+
+  useEffect(() => {
+    if (!client) return;
+    loadMessages(conversation, client);
+  });
+
+  return useLiveQuery(async () => {
+    return await db.messages
+      .where("conversationTopic")
+      .equals(conversation.topic)
+      .sortBy("sentAt");
+  });
+}

@@ -1,7 +1,7 @@
-import db, { Conversation, Message, MessageAttachment } from "./db";
+import db, { Conversation, Message } from "./db";
 import {
   getXMTPConversation,
-  clean,
+  stripTopicName,
   updateConversationTimestamp,
 } from "./conversations";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -9,41 +9,14 @@ import { useEffect } from "react";
 import { useClient } from "../hooks/useClient";
 import * as XMTP from "@xmtp/xmtp-js";
 import {
-  Attachment,
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
-  RemoteAttachment,
-  RemoteAttachmentCodec,
 } from "xmtp-content-type-remote-attachment";
 import { Mutex } from "async-mutex";
 import { upload } from "./attachments";
 import { process } from "./message-processor";
 
 const messageMutex = new Mutex();
-
-export function useLatestMessages(
-  conversations: Conversation[]
-): (Message | undefined)[] {
-  return (
-    useLiveQuery(async () => {
-      return await Promise.all(
-        conversations.map(async (conversation) => {
-          return (
-            await db.messages
-              .where("conversationTopic")
-              .equals(conversation.topic)
-              .reverse()
-              .sortBy("sentAt")
-          )[0];
-        })
-      );
-    }, [
-      conversations
-        .map((conversation) => String(conversation.updatedAt))
-        .join(),
-    ]) || []
-  );
-}
 
 export async function sendMessage(
   client: XMTP.Client,
@@ -52,7 +25,7 @@ export async function sendMessage(
   contentType: XMTP.ContentTypeId
 ): Promise<Message> {
   const message: Message = {
-    conversationTopic: clean(conversation.topic),
+    conversationTopic: stripTopicName(conversation.topic),
     xmtpID: "PENDING-" + new Date().toString(),
     senderAddress: client.address,
     sentByMe: true,
@@ -66,15 +39,15 @@ export async function sendMessage(
 
   await process(client, conversation, message);
 
-  // Always treat Attachments as remote attachments so we don't send
-  // huge messages to the network
-  if (contentType.sameAs(ContentTypeAttachment)) {
-    content = await upload(content);
-    contentType = ContentTypeRemoteAttachment;
-  }
-
   // Do the actual sending async
   (async () => {
+    // Always treat Attachments as remote attachments so we don't send
+    // huge messages to the network
+    if (contentType.sameAs(ContentTypeAttachment)) {
+      content = await upload(content);
+      contentType = ContentTypeRemoteAttachment;
+    }
+
     const xmtpConversation = await getXMTPConversation(client, conversation);
     const decodedMessage = await xmtpConversation.send(content, {
       contentType: contentType,
@@ -115,7 +88,7 @@ export async function saveMessage(
     }
 
     const message: Message = {
-      conversationTopic: clean(decodedMessage.contentTopic),
+      conversationTopic: stripTopicName(decodedMessage.contentTopic),
       xmtpID: decodedMessage.id,
       senderAddress: decodedMessage.senderAddress,
       sentByMe: decodedMessage.senderAddress == client.address,
@@ -138,27 +111,16 @@ export async function saveMessage(
   });
 }
 
-export function useMessages(conversation: Conversation): Message[] | undefined {
-  const client = useClient();
+export async function loadMessages(
+  conversation: Conversation,
+  client: XMTP.Client
+) {
+  const xmtpConversation = await getXMTPConversation(client, conversation);
+  for (const message of await xmtpConversation.messages()) {
+    saveMessage(client, conversation, message, false);
+  }
 
-  useEffect(() => {
-    if (!client) return;
-    (async () => {
-      const xmtpConversation = await getXMTPConversation(client, conversation);
-      for (const message of await xmtpConversation.messages()) {
-        saveMessage(client, conversation, message, false);
-      }
-
-      for await (const message of await xmtpConversation.streamMessages()) {
-        await saveMessage(client, conversation, message);
-      }
-    })();
-  });
-
-  return useLiveQuery(async () => {
-    return await db.messages
-      .where("conversationTopic")
-      .equals(conversation.topic)
-      .sortBy("sentAt");
-  });
+  for await (const message of await xmtpConversation.streamMessages()) {
+    await saveMessage(client, conversation, message);
+  }
 }

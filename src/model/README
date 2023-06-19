@@ -1,0 +1,2 @@
+The files in this directory handle all interactions with the XMTP network
+as well as keeping the local database up to date.
