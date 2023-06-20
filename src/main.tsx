@@ -19,7 +19,7 @@ async function conversationLoader({ params }: any) {
 const router = createHashRouter(
   [
     {
-      path: "/",
+      path: "/*",
       element: <App />,
     },
     {
