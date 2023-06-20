@@ -4,9 +4,6 @@ import {
   stripTopicName,
   updateConversationTimestamp,
 } from "./conversations";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useEffect } from "react";
-import { useClient } from "../hooks/useClient";
 import * as XMTP from "@xmtp/xmtp-js";
 import {
   ContentTypeAttachment,
