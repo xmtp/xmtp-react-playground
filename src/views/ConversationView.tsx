@@ -1,12 +1,12 @@
 import { ReactElement, useEffect, useState } from "react";
 import db, { Conversation } from "../model/db";
-import { useMessages } from "../model/messages";
+import { useMessages } from "../hooks/useMessages";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { useLiveConversation } from "../model/conversations";
+import { useLiveConversation } from "../hooks/useLiveConversation";
 import ConversationSettingsView from "./ConversationSettingsView";
 
 export default function ConversationView({

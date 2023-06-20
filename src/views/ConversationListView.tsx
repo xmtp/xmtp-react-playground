@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
-import { useConversations } from "../model/conversations";
+import { useConversations } from "../hooks/useConversations";
 import { useClient } from "../hooks/useClient";
 import { Link } from "react-router-dom";
-import { useLatestMessages } from "../model/messages";
+import { useLatestMessages } from "../hooks/useLatestMessages";
 import ConversationCellView from "./ConversationCellView";
 
 export default function ConversationListView(): ReactElement {

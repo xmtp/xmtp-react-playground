@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 import { Message, MessageAttachment } from "../model/db";
-import { useAttachment } from "../model/attachments";
+import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
 import {
   ContentTypeGroupChatMemberAdded,
