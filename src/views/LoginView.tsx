@@ -22,9 +22,6 @@ export default function LoginView(): ReactElement {
     // Don't do this in real life.
     localStorage.setItem("_insecurePrivateKey", wallet.privateKey);
 
-    client.enableGroupChat();
-    client.registerCodec(new AttachmentCodec());
-    client.registerCodec(new RemoteAttachmentCodec());
     setClient(client);
   }
 
