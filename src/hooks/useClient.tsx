@@ -13,10 +13,12 @@ export function useClient() {
 export function useSetClient() {
   const setClient = useContext(ClientContext).setClient;
 
-  return (client: Client) => {
-    client.registerCodec(new AttachmentCodec());
-    client.registerCodec(new RemoteAttachmentCodec());
-    client.enableGroupChat();
+  return (client: Client | null) => {
+    if (client) {
+      client.registerCodec(new AttachmentCodec());
+      client.registerCodec(new RemoteAttachmentCodec());
+      client.enableGroupChat();
+    }
 
     setClient(client);
   };
