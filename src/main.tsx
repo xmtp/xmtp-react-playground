@@ -16,24 +16,21 @@ async function conversationLoader({ params }: any) {
   return { conversation };
 }
 
-const router = createHashRouter(
-  [
-    {
-      path: "*",
-      element: <App />,
-    },
-    {
-      path: "c/:conversationTopic",
-      element: <ConversationViewWithLoader />,
-      loader: conversationLoader,
-    },
-    {
-      path: "new",
-      element: <NewConversationView />,
-    },
-  ],
-  { basename: import.meta.env.DEV ? "" : "/xmtp-quickstart-react/" }
-);
+const router = createHashRouter([
+  {
+    path: "*",
+    element: <App />,
+  },
+  {
+    path: "c/:conversationTopic",
+    element: <ConversationViewWithLoader />,
+    loader: conversationLoader,
+  },
+  {
+    path: "new",
+    element: <NewConversationView />,
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
