@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
-import db, { Conversation } from "../model/db";
+import db, { Conversation, Message } from "../model/db";
 import { useMessages } from "../hooks/useMessages";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
@@ -8,6 +8,16 @@ import Header from "../components/Header";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useLiveConversation } from "../hooks/useLiveConversation";
 import ConversationSettingsView from "./ConversationSettingsView";
+import { ContentTypeReaction } from "../model/reactions";
+import { ContentTypeId } from "@xmtp/xmtp-js";
+
+function appearsInMessageList(message: Message): boolean {
+  if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
+    return false;
+  }
+
+  return true;
+}
 
 export default function ConversationView({
   conversation,
@@ -54,9 +64,11 @@ export default function ConversationView({
       <div>
         {messages?.length == 0 && <p>No messages yet.</p>}
         {messages ? (
-          messages.map((message) => (
-            <MessageCellView key={message.xmtpID} message={message} />
-          ))
+          messages
+            .filter(appearsInMessageList)
+            .map((message) => (
+              <MessageCellView key={message.xmtpID} message={message} />
+            ))
         ) : (
           <span>Could not load messages</span>
         )}

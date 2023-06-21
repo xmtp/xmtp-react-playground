@@ -14,6 +14,8 @@ import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
 } from "xmtp-content-type-remote-attachment";
+import { useReactions } from "../hooks/useReactions";
+import ReactionsView from "./ReactionsView";
 
 function ImageAttachmentContent(attachment: MessageAttachment): ReactElement {
   const objectURL = URL.createObjectURL(
@@ -112,6 +114,7 @@ export default function MessageCellView({
       </span>
       <div className="ml-2">
         <Content message={message} />
+        <ReactionsView message={message} />
       </div>
     </div>
   );

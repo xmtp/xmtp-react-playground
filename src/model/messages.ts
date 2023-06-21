@@ -114,7 +114,7 @@ export async function loadMessages(
 ) {
   const xmtpConversation = await getXMTPConversation(client, conversation);
   for (const message of await xmtpConversation.messages()) {
-    saveMessage(client, conversation, message, false);
+    saveMessage(client, conversation, message, true);
   }
 
   for await (const message of await xmtpConversation.streamMessages()) {

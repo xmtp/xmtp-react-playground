@@ -7,6 +7,12 @@ import {
   RemoteAttachment,
   RemoteAttachmentCodec,
 } from "xmtp-content-type-remote-attachment";
+import {
+  ContentTypeReaction,
+  Reaction,
+  persistReaction,
+  removeReaction,
+} from "./reactions";
 
 export async function process(
   client: XMTP.Client,
@@ -67,5 +73,29 @@ export async function process(
     await db.conversations.update(conversation, {
       groupMembers: Array.from(groupMembers),
     });
+  }
+
+  if (ContentTypeReaction.sameAs(message.contentType as XMTP.ContentTypeId)) {
+    const reaction: Reaction = message.content;
+
+    if (reaction.action == "removed") {
+      const existing = await db.reactions
+        .where({
+          messageXMTPID: reaction.reference,
+          reactor: message.senderAddress,
+          name: reaction.content,
+        })
+        .first();
+
+      if (existing && existing.id) {
+        db.reactions.delete(existing.id);
+      }
+    } else {
+      await persistReaction({
+        reactor: message.senderAddress,
+        name: reaction.content,
+        messageXMTPID: reaction.reference,
+      });
+    }
   }
 }
