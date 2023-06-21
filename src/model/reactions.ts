@@ -86,7 +86,7 @@ export async function addReaction(
   }
 
   await persistReaction({
-    reactor: message.senderAddress,
+    reactor: client.address,
     name: reactionName,
     messageXMTPID: message.xmtpID,
   });
@@ -135,6 +135,18 @@ export async function removeReaction(
   const xmtpConversation = await getXMTPConversation(client, conversation);
   await xmtpConversation.send(reaction, {
     contentType: ContentTypeReaction,
+  });
+}
+
+export async function deleteReaction(reaction: MessageReaction) {
+  await reactionMutex.runExclusive(async () => {
+    await db.reactions
+      .where({
+        messageXMTPID: reaction.messageXMTPID,
+        reactor: reaction.reactor,
+        name: reaction.name,
+      })
+      .delete();
   });
 }
 

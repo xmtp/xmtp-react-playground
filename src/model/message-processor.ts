@@ -10,6 +10,7 @@ import {
 import {
   ContentTypeReaction,
   Reaction,
+  deleteReaction,
   persistReaction,
   removeReaction,
 } from "./reactions";
@@ -79,17 +80,11 @@ export async function process(
     const reaction: Reaction = message.content;
 
     if (reaction.action == "removed") {
-      const existing = await db.reactions
-        .where({
-          messageXMTPID: reaction.reference,
-          reactor: message.senderAddress,
-          name: reaction.content,
-        })
-        .first();
-
-      if (existing && existing.id) {
-        db.reactions.delete(existing.id);
-      }
+      await deleteReaction({
+        messageXMTPID: reaction.reference,
+        reactor: message.senderAddress,
+        name: reaction.content,
+      });
     } else {
       await persistReaction({
         reactor: message.senderAddress,
