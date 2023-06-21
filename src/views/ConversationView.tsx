@@ -11,13 +11,13 @@ import ConversationSettingsView from "./ConversationSettingsView";
 import { ContentTypeReaction } from "../model/reactions";
 import { ContentTypeId } from "@xmtp/xmtp-js";
 
-function appearsInMessageList(message: Message): boolean {
+const appearsInMessageList = (message: Message): boolean => {
   if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
     return false;
   }
 
   return true;
-}
+};
 
 export default function ConversationView({
   conversation,
@@ -64,11 +64,15 @@ export default function ConversationView({
       <div>
         {messages?.length == 0 && <p>No messages yet.</p>}
         {messages ? (
-          messages
-            .filter(appearsInMessageList)
-            .map((message) => (
-              <MessageCellView key={message.xmtpID} message={message} />
-            ))
+          messages.reduce((acc: ReactElement[], message: Message) => {
+            if (appearsInMessageList(message)) {
+              acc.push(
+                <MessageCellView key={message.xmtpID} message={message} />
+              );
+            }
+
+            return acc;
+          }, [] as ReactElement[])
         ) : (
           <span>Could not load messages</span>
         )}
