@@ -47,6 +47,7 @@ export default function ClientProvider({
       client.registerCodec(new RemoteAttachmentCodec());
       client.registerCodec(new ReactionCodec());
       client.registerCodec(new ReplyCodec());
+      client.registerCodec(new ReactionCodec());
 
       setClient(client);
       setIsLoading(false);

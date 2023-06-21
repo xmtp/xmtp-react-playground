@@ -18,6 +18,8 @@ import { useReactions } from "../hooks/useReactions";
 import ReactionsView from "./ReactionsView";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 import MessageRepliesView from "./MessageRepliesView";
+import { useReactions } from "../hooks/useReactions";
+import ReactionsView from "./ReactionsView";
 
 function ImageAttachmentContent({
   attachment,
@@ -146,6 +148,7 @@ export default function MessageCellView({
         <MessageContent message={message} />
         <ReactionsView message={message} />
         <MessageRepliesView message={message} />
+        <ReactionsView message={message} />
       </div>
     </div>
   );

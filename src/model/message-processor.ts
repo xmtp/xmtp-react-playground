@@ -7,14 +7,8 @@ import {
   RemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-import {
-  ContentTypeReaction,
-  Reaction,
-  deleteReaction,
-  persistReaction,
-  removeReaction,
-} from "./reactions";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
+import { ContentTypeReaction, Reaction, persistReaction } from "./reactions";
 
 export async function process(
   client: XMTP.Client,
