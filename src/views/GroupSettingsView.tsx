@@ -1,22 +1,8 @@
-import {
-  FormEvent,
-  ReactElement,
-  ReactEventHandler,
-  createRef,
-  useEffect,
-  useState,
-} from "react";
-import { Conversation } from "../model/db";
+import { FormEvent, ReactElement, createRef, useState } from "react";
+import { Conversation, getXMTPConversation } from "@xmtp/models";
 import Button from "../components/Button";
-import { sendMessage } from "../model/messages";
-import {
-  ContentTypeGroupChatTitleChanged,
-  GroupChat,
-  GroupChatMemberAdded,
-  GroupChatTitleChanged,
-} from "@xmtp/xmtp-js";
+import { GroupChat } from "@xmtp/xmtp-js";
 import { useClient } from "../hooks/useClient";
-import { getXMTPConversation } from "../model/conversations";
 
 export default function GroupSettingsView({
   conversation,

@@ -7,8 +7,7 @@ import {
 } from "react";
 import Button from "../components/Button";
 import { useClient } from "../hooks/useClient";
-import { Conversation } from "../model/db";
-import { sendMessage } from "../model/messages";
+import { Conversation, sendMessage } from "@xmtp/models";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 import {
   Attachment,

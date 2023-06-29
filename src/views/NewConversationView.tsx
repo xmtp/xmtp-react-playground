@@ -1,11 +1,8 @@
 import { FormEvent, ReactElement, createRef, useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
-import {
-  startConversation,
-  startGroupConversation,
-} from "../model/conversations";
+import { startConversation, startGroupConversation } from "@xmtp/models";
 import { useClient } from "../hooks/useClient";
 
 export default function NewConversationView(): ReactElement {

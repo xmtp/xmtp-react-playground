@@ -1,14 +1,11 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import Button from "../components/Button";
-import { useClient, useSetClient } from "../hooks/useClient";
-import { Wallet } from "ethers";
+import { useSetClient } from "../hooks/useClient";
+import { Bytes, Signer, Wallet } from "ethers";
 import { Client } from "@xmtp/xmtp-js";
 import "@rainbow-me/rainbowkit/styles.css";
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { client as webauthnClient } from "@passwordless-id/webauthn";
 
 export default function LoginView(): ReactElement {
   const setClient = useSetClient();

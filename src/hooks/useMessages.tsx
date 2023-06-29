@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useClient } from "./useClient";
-import { loadMessages } from "../model/messages";
-import db, { Conversation, Message } from "../model/db";
+import {} from "@xmtp/models";
+import XMTPDB, { Conversation, Message, loadMessages } from "@xmtp/models";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export function useMessages(conversation: Conversation): Message[] | undefined {
@@ -13,7 +13,7 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
   });
 
   return useLiveQuery(async () => {
-    return await db.messages
+    return await XMTPDB.messages
       .where("conversationTopic")
       .equals(conversation.topic)
       .sortBy("sentAt");

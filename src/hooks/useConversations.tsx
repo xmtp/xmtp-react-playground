@@ -1,10 +1,12 @@
-import { Conversation } from "../model/db";
+import { Conversation } from "@xmtp/models";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect } from "react";
 import * as XMTP from "@xmtp/xmtp-js";
-import { saveMessage } from "../model/messages";
-import { saveConversation } from "../model/conversations";
-import db from "../model/db";
+import { saveMessage } from "@xmtp/models";
+import { saveConversation } from "@xmtp/models";
+import XMTPDB from "@xmtp/models";
+
+const db = XMTPDB;
 
 export function useConversations(client: XMTP.Client | null): Conversation[] {
   useEffect(() => {

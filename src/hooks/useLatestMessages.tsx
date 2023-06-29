@@ -1,4 +1,4 @@
-import db, { Conversation, Message } from "../model/db";
+import db, { Conversation, Message } from "@xmtp/models";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export function useLatestMessages(

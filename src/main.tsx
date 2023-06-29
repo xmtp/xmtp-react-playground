@@ -6,7 +6,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import ClientProvider from "./contexts/ClientContext.tsx";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { findConversation } from "./model/conversations";
+import { findConversation } from "@xmtp/models";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 import NewConversationView from "./views/NewConversationView.tsx";
 import WalletContext from "./contexts/WalletContext.tsx";
