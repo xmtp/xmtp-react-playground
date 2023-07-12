@@ -1,41 +1,34 @@
-# XMTP React Playground
+# XMTP React playground
 
-**XMTP React Playground demonstrates core and advanced capabilities of the XMTP JS client SDK, aiming to showcase effective and innovative ways of building with XMTP with limited design.**
+Use the XMTP React playground app as a tool to help you build your own app with XMTP.
 
-The XMTP React Playground is built with React and the [XMTP client SDK for JavaScript](https://github.com/xmtp/xmtp-js) (`xmtp-js`).
+Built with React and the [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js), the playground provides the following functionality that you can use as a foundation for your app:
 
-This app is maintained by [XMTP Labs](https://xmtplabs.com) and distributed under [MIT License](./LICENSE) for learning about and developing apps built with XMTP (Extensible Message Transport Protocol), the open protocol and network for secure web3 messaging.
+- Performant [database architecture](https://xmtp.org/docs/tutorials/performance#use-a-local-cache)
+- Group chat
+- Message reactions
+- Message replies
+- [Attachments](https://xmtp.org/docs/build/attachments)
+  - Images
+  - More formats to come
 
-You are free to customize and deploy the app.
+The playground's visual design is intentionally limited to help make the code easier for your to use, customize, and deploy.
 
-This app has not undergone a formal security audit.
+The playground has not undergone a formal security audit.
 
 > **Note**  
-> You might also be interested in our Vue Plaground -- Coming Soon 
+> You might also be interested in our Vue playground: Coming soon 
 
-## Get started
-
-### Install the package
+## Install the package
 
 ```bash
 npm install
 ```
 
-### Run the development server
+## Run the development server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
-
-## Functionality
-
-- Performant Database Architecture
-- Group Chat
-- Message Reactions
-- Message Replies
-- Attachments
-  - Images
-
-
+Open [http://localhost:5173](http://localhost:5173) in your browser to access the XMTP React playground app.
