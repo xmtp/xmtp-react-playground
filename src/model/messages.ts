@@ -24,6 +24,7 @@ export async function sendMessage(
 ): Promise<Message> {
   const message: Message = {
     conversationTopic: stripTopicName(conversation.topic),
+    inReplyToID: "",
     xmtpID: "PENDING-" + new Date().toString(),
     senderAddress: client.address,
     sentByMe: true,
@@ -110,6 +111,7 @@ export async function saveMessage(
 
     const message: Message = {
       conversationTopic: stripTopicName(decodedMessage.contentTopic),
+      inReplyToID: "",
       xmtpID: decodedMessage.id,
       senderAddress: decodedMessage.senderAddress,
       sentByMe: decodedMessage.senderAddress == client.address,

@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useContext } from "react";
+import { ReactElement } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
@@ -15,9 +15,7 @@ import {
   ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
-import { useReply } from "../hooks/useReply";
-import Button from "../components/Button";
-import { ReplyContext } from "../contexts/ReplyContext";
+import MessageRepliesView from "./MessageRepliesView";
 
 function ImageAttachmentContent({
   attachment,
@@ -60,43 +58,34 @@ function AttachmentContent({ message }: { message: Message }): ReactElement {
   );
 }
 
-function ReplyContent({ message }: { message: Message }): ReactElement | null {
-  const originalMessage = useReply(message);
+export function Content({
+  content,
+  contentType,
+}: {
+  content: any;
+  contentType: ContentTypeId;
+}): ReactElement {
+  if (ContentTypeText.sameAs(contentType)) {
+    return <span>{content}</span>;
+  }
 
-  // this shouldn't happen, but guard against it anyway
-  if (!originalMessage) {
-    return null;
+  if (ContentTypeReply.sameAs(contentType)) {
+    const reply: Reply = content;
+    return <Content content={reply.content} contentType={reply.contentType} />;
   }
 
   return (
-    <>
-      <div className="mb-2 opacity-50">
-        <small>Reply to</small>
-      </div>
-      <div className="opacity-50 border rounded dark:bg-black dark:border-zinc-700 px-2 py-1 mb-2">
-        {Content({
-          message: {
-            ...originalMessage,
-            xmtpID: `${originalMessage.xmtpID}-${message.xmtpID}`,
-          },
-        })}
-      </div>
-      {Content({
-        message: {
-          ...message,
-          content: (message.content as Reply).content,
-          contentType: (message.content as Reply).contentType,
-        },
-      })}
-    </>
+    <span className="text-zinc-500 break-all">
+      Unknown content: {JSON.stringify(content)}
+    </span>
   );
 }
 
-export function Content({ message }: { message: Message }): ReactElement {
-  if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
-    return <span>{message.content}</span>;
-  }
-
+export function MessageContent({
+  message,
+}: {
+  message: Message;
+}): ReactElement {
   if (
     ContentTypeAttachment.sameAs(message.contentType as ContentTypeId) ||
     ContentTypeRemoteAttachment.sameAs(message.contentType as ContentTypeId)
@@ -105,9 +94,10 @@ export function Content({ message }: { message: Message }): ReactElement {
   }
 
   return (
-    <span className="text-zinc-500 break-all">
-      Unknown content: {JSON.stringify(message.content)}
-    </span>
+    <Content
+      content={message.content}
+      contentType={message.contentType as ContentTypeId}
+    />
   );
 }
 
@@ -116,14 +106,6 @@ export default function MessageCellView({
 }: {
   message: Message;
 }): ReactElement {
-  const { setIsReplying } = useContext(ReplyContext);
-  const handleReply = useCallback(
-    (message: Message) => {
-      setIsReplying(true, message);
-    },
-    [setIsReplying]
-  );
-
   if (
     ContentTypeGroupChatTitleChanged.sameAs(
       message.contentType as ContentTypeId
@@ -150,8 +132,6 @@ export default function MessageCellView({
     );
   }
 
-  const isReply = ContentTypeReply.sameAs(message.contentType as ContentTypeId);
-
   return (
     <div className="flex mb-1">
       <span
@@ -161,23 +141,8 @@ export default function MessageCellView({
         {shortAddress(message.senderAddress)}:
       </span>
       <div className="ml-2">
-        {isReply ? (
-          <ReplyContent message={message} />
-        ) : (
-          <Content message={message} />
-        )}
-        {!isReply && !message.sentByMe && (
-          <div>
-            <Button
-              type="button"
-              color="secondary"
-              size="sm"
-              onClick={() => handleReply(message)}
-            >
-              Reply
-            </Button>
-          </div>
-        )}
+        <MessageContent message={message} />
+        <MessageRepliesView message={message} />
       </div>
     </div>
   );

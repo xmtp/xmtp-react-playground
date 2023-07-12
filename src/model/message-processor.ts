@@ -7,6 +7,7 @@ import {
   RemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
+import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 
 export async function process(
   client: XMTP.Client,
@@ -18,6 +19,13 @@ export async function process(
   }
 ) {
   const { content, contentType, id: messageID } = message;
+
+  if (ContentTypeReply.sameAs(contentType)) {
+    const reply = content as Reply;
+    await db.messages.update(message.id, {
+      inReplyToID: reply.reference,
+    });
+  }
 
   if (ContentTypeAttachment.sameAs(contentType)) {
     const attachment = content as Attachment;

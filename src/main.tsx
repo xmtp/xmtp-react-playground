@@ -37,9 +37,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ClientProvider>
       <WalletContext>
-        <ReplyProvider>
-          <RouterProvider router={router} />
-        </ReplyProvider>
+        <RouterProvider router={router} />
       </WalletContext>
     </ClientProvider>
   </React.StrictMode>
