@@ -4,7 +4,8 @@ import { createContext, useState, ReactElement, useEffect } from "react";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
+import { ReplyCodec } from "@xmtp/content-type-reply";
 
 type ClientContextValue = {
   client: Client | null;
@@ -43,6 +44,7 @@ export default function ClientProvider({
       client.enableGroupChat();
       client.registerCodec(new AttachmentCodec());
       client.registerCodec(new RemoteAttachmentCodec());
+      client.registerCodec(new ReplyCodec());
 
       setClient(client);
       setIsLoading(false);

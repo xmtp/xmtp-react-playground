@@ -3,7 +3,7 @@ import {
   AttachmentCodec,
   RemoteAttachment,
   RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import { Web3Storage, Filelike } from "web3.storage";
 
 export default class Upload implements Filelike {

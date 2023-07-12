@@ -3,6 +3,8 @@ import {
   FormEvent,
   ReactElement,
   createRef,
+  useCallback,
+  useContext,
   useState,
 } from "react";
 import Button from "../components/Button";
@@ -13,17 +15,21 @@ import { ContentTypeText } from "@xmtp/xmtp-js";
 import {
   Attachment,
   ContentTypeAttachment,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import AttachmentPreviewView from "./AttachmentPreviewView";
+import { MessageContent } from "./MessageCellView";
+import { shortAddress } from "../util/shortAddress";
+import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 
 export default function MessageComposerView({
   conversation,
 }: {
   conversation: Conversation;
 }): ReactElement {
+  const [loading, setLoading] = useState(false);
   const [attachment, setAttachment] = useState<Attachment | undefined>();
+  const [textInput, setTextInput] = useState("");
 
-  const textField = createRef<HTMLInputElement>();
   const fileField = createRef<HTMLInputElement>();
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -33,22 +39,22 @@ export default function MessageComposerView({
     e.preventDefault();
 
     (async () => {
-      const text = textField.current?.value;
-      if (text) {
-        await sendMessage(client, conversation, text, ContentTypeText);
-        textField.current.value = "";
+      setLoading(true);
+
+      // check for input
+      if (textInput || attachment) {
+        const finalContent = textInput || attachment;
+        const finalContentType = textInput
+          ? ContentTypeText
+          : ContentTypeAttachment;
+        // send regular message
+        await sendMessage(client, conversation, finalContent, finalContentType);
       }
 
-      if (attachment) {
-        await sendMessage(
-          client,
-          conversation,
-          attachment,
-          ContentTypeAttachment
-        );
-
-        setAttachment(undefined);
-      }
+      // clear inputs
+      setAttachment(undefined);
+      setTextInput("");
+      setLoading(false);
     })();
   }
 
@@ -103,9 +109,10 @@ export default function MessageComposerView({
               }
               className="flex-grow outline-none dark:bg-black"
               name="text"
-              ref={textField}
               autoComplete="off"
               disabled={!!attachment}
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
             />
           </div>
         </div>

@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { Conversation, Message } from "../model/db";
 import { shortAddress } from "../util/shortAddress";
 import ReactTimeAgo from "react-time-ago";
-import { Content } from "./MessageCellView";
+import { MessageContent } from "./MessageCellView";
 
 export default function ConversationCellView({
   conversation,
@@ -28,7 +28,7 @@ export default function ConversationCellView({
       </div>
       {latestMessage ? (
         <div className="block text-zinc-500">
-          <Content message={latestMessage} />
+          <MessageContent message={latestMessage} />
         </div>
       ) : (
         <div className="block text-zinc-500">No messages yet.</div>

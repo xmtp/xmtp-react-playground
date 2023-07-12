@@ -7,7 +7,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function LoginView(): ReactElement {

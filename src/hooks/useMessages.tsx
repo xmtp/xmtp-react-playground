@@ -14,8 +14,10 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
 
   return useLiveQuery(async () => {
     return await db.messages
-      .where("conversationTopic")
-      .equals(conversation.topic)
+      .where({
+        conversationTopic: conversation.topic,
+        inReplyToID: "",
+      })
       .sortBy("sentAt");
   });
 }

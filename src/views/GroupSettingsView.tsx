@@ -26,6 +26,11 @@ export default function GroupSettingsView({
   dismiss: () => void;
 }): ReactElement {
   const client = useClient()!;
+
+  // We're using an uncontrolled component here because we don't need to update
+  // anything as the user is typing.
+  //
+  // See https://react.dev/learn/manipulating-the-dom-with-refs#best-practices-for-dom-manipulation-with-refs
   const textField = createRef<HTMLInputElement>();
 
   const [title, setTitle] = useState<string | undefined>(conversation.title);

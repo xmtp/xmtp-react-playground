@@ -15,7 +15,9 @@
     "@animxyz/react": "^0.6.7",
     "@heroicons/react": "^2.0.18",
     "@rainbow-me/rainbowkit": "^0.10.0",
-    "@xmtp/xmtp-js": "^9.1.0-beta.6",
+    "@xmtp/content-type-remote-attachment": "^1.0.7",
+    "@xmtp/content-type-reply": "^1.0.0",
+    "@xmtp/xmtp-js": "^9.4.0-beta.1",
     "async-mutex": "^0.4.0",
     "buffer": "^6.0.3",
     "dexie": "^3.2.4",
@@ -26,9 +28,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.13.0",
     "react-time-ago": "^7.2.1",
-    "web3.storage": "^4.5.4",
-    "xmtp-content-type-remote-attachment": "^1.0.7",
-    "wagmi": "^0.10.0"
+    "wagmi": "^0.10.0",
+    "web3.storage": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
