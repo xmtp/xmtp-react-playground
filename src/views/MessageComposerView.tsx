@@ -3,6 +3,8 @@ import {
   FormEvent,
   ReactElement,
   createRef,
+  useCallback,
+  useContext,
   useState,
 } from "react";
 import Button from "../components/Button";
@@ -13,18 +15,28 @@ import { ContentTypeText } from "@xmtp/xmtp-js";
 import {
   Attachment,
   ContentTypeAttachment,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import AttachmentPreviewView from "./AttachmentPreviewView";
+import { ReplyContext } from "../contexts/ReplyContext";
+import { Content } from "./MessageCellView";
+import { shortAddress } from "../util/shortAddress";
+import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 
 export default function MessageComposerView({
   conversation,
 }: {
   conversation: Conversation;
 }): ReactElement {
+  const [loading, setLoading] = useState(false);
+  const { isReplying, message, setIsReplying } = useContext(ReplyContext);
   const [attachment, setAttachment] = useState<Attachment | undefined>();
+  const [textInput, setTextInput] = useState("");
 
-  const textField = createRef<HTMLInputElement>();
   const fileField = createRef<HTMLInputElement>();
+
+  const handleDismissReply = useCallback(() => {
+    setIsReplying(false);
+  }, [setIsReplying]);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const client = useClient()!;
@@ -33,22 +45,39 @@ export default function MessageComposerView({
     e.preventDefault();
 
     (async () => {
-      const text = textField.current?.value;
-      if (text) {
-        await sendMessage(client, conversation, text, ContentTypeText);
-        textField.current.value = "";
+      setLoading(true);
+
+      // check for input
+      if (textInput || attachment) {
+        const finalContent = textInput || attachment;
+        const finalContentType = textInput
+          ? ContentTypeText
+          : ContentTypeAttachment;
+        // is this a reply?
+        if (isReplying && message?.xmtpID) {
+          const reply = {
+            content: finalContent,
+            contentType: finalContentType,
+            reference: message.xmtpID,
+          } satisfies Reply;
+          // send reply
+          await sendMessage(client, conversation, reply, ContentTypeReply);
+          setIsReplying(false);
+        } else {
+          // send regular message
+          await sendMessage(
+            client,
+            conversation,
+            finalContent,
+            finalContentType
+          );
+        }
       }
 
-      if (attachment) {
-        await sendMessage(
-          client,
-          conversation,
-          attachment,
-          ContentTypeAttachment
-        );
-
-        setAttachment(undefined);
-      }
+      // clear inputs
+      setAttachment(undefined);
+      setTextInput("");
+      setLoading(false);
     })();
   }
 
@@ -80,6 +109,29 @@ export default function MessageComposerView({
       />
       <form className="flex space-x-2 items-end" onSubmit={onSubmit}>
         <div className=" flex-grow border rounded dark:bg-black dark:border-zinc-700 p-2">
+          {isReplying && message && (
+            <div className="p-4">
+              <div className="mb-2">
+                Replying to{" "}
+                <span className="text-zinc-500">
+                  {shortAddress(message.senderAddress)}:
+                </span>
+              </div>
+              <div className="border rounded dark:bg-black dark:border-zinc-700 p-2 mb-2">
+                <Content message={message} />
+              </div>
+              <small>
+                <button
+                  className="text-blue-500"
+                  type="button"
+                  onClick={handleDismissReply}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              </small>
+            </div>
+          )}
           {attachment && (
             <AttachmentPreviewView
               attachment={attachment}
@@ -103,9 +155,10 @@ export default function MessageComposerView({
               }
               className="flex-grow outline-none dark:bg-black"
               name="text"
-              ref={textField}
               autoComplete="off"
               disabled={!!attachment}
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
             />
           </div>
         </div>

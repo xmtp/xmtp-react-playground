@@ -8,10 +8,11 @@ import * as XMTP from "@xmtp/xmtp-js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import { Mutex } from "async-mutex";
 import { upload } from "./attachments";
 import { process } from "./message-processor";
+import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 
 const messageMutex = new Mutex();
 
@@ -34,20 +35,43 @@ export async function sendMessage(
 
   message.id = await db.messages.add(message);
 
-  await process(client, conversation, message);
+  await process(client, conversation, {
+    id: message.id,
+    content,
+    contentType,
+  });
+
+  // process reply content as message
+  if (contentType.sameAs(ContentTypeReply)) {
+    const replyContent = content as Reply;
+    await process(client, conversation, {
+      id: message.id,
+      content: replyContent.content,
+      contentType: replyContent.contentType,
+    });
+  }
 
   // Do the actual sending async
   (async () => {
-    // Always treat Attachments as remote attachments so we don't send
-    // huge messages to the network
-    if (contentType.sameAs(ContentTypeAttachment)) {
-      content = await upload(content);
-      contentType = ContentTypeRemoteAttachment;
+    // check if message is a reply that contains an attachment
+    if (
+      contentType.sameAs(ContentTypeReply) &&
+      (content as Reply).contentType.sameAs(ContentTypeAttachment)
+    ) {
+      (content as Reply).content = await upload(content.content);
+      (content as Reply).contentType = ContentTypeRemoteAttachment;
+    } else {
+      // Always treat Attachments as remote attachments so we don't send
+      // huge messages to the network
+      if (contentType.sameAs(ContentTypeAttachment)) {
+        content = await upload(content);
+        contentType = ContentTypeRemoteAttachment;
+      }
     }
 
     const xmtpConversation = await getXMTPConversation(client, conversation);
     const decodedMessage = await xmtpConversation.send(content, {
-      contentType: contentType,
+      contentType,
     });
 
     await db.messages.update(message.id!, {
@@ -97,7 +121,21 @@ export async function saveMessage(
 
     message.id = await db.messages.add(message);
 
-    await process(client, conversation, message);
+    await process(client, conversation, {
+      id: message.id,
+      content: decodedMessage.content,
+      contentType: decodedMessage.contentType,
+    });
+
+    // process reply content as message
+    if (decodedMessage.contentType.sameAs(ContentTypeReply)) {
+      const replyContent = decodedMessage.content as Reply;
+      await process(client, conversation, {
+        id: message.id,
+        content: replyContent.content,
+        contentType: replyContent.contentType,
+      });
+    }
 
     await updateConversationTimestamp(
       message.conversationTopic,

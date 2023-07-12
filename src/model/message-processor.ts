@@ -1,4 +1,4 @@
-import db, { Conversation, Message, MessageAttachment } from "./db";
+import db, { Conversation, MessageAttachment } from "./db";
 import * as XMTP from "@xmtp/xmtp-js";
 import {
   Attachment,
@@ -6,60 +6,54 @@ import {
   ContentTypeRemoteAttachment,
   RemoteAttachment,
   RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 
 export async function process(
   client: XMTP.Client,
   conversation: Conversation,
-  message: Message
+  message: {
+    id: number;
+    content: any;
+    contentType: XMTP.ContentTypeId;
+  }
 ) {
-  if (ContentTypeAttachment.sameAs(message.contentType as XMTP.ContentTypeId)) {
-    const attachment: Attachment = message.content;
+  const { content, contentType, id: messageID } = message;
+
+  if (ContentTypeAttachment.sameAs(contentType)) {
+    const attachment = content as Attachment;
     const messageAttachment: MessageAttachment = {
-      messageID: message.id!,
+      messageID,
       ...attachment,
     };
 
     await db.attachments.add(messageAttachment);
   }
 
-  if (
-    ContentTypeRemoteAttachment.sameAs(
-      message.contentType as XMTP.ContentTypeId
-    )
-  ) {
-    const remoteAttachment: RemoteAttachment = message.content;
+  if (ContentTypeRemoteAttachment.sameAs(contentType)) {
+    const remoteAttachment = content as RemoteAttachment;
     const attachment: Attachment = await RemoteAttachmentCodec.load(
       remoteAttachment,
       client
     );
 
     const messageAttachment: MessageAttachment = {
-      messageID: message.id!,
+      messageID,
       ...attachment,
     };
 
     await db.attachments.add(messageAttachment);
   }
 
-  if (
-    XMTP.ContentTypeGroupChatTitleChanged.sameAs(
-      message.contentType as XMTP.ContentTypeId
-    )
-  ) {
-    const titleChanged: XMTP.GroupChatTitleChanged = message.content;
+  if (XMTP.ContentTypeGroupChatTitleChanged.sameAs(contentType)) {
+    const titleChanged = content as XMTP.GroupChatTitleChanged;
 
     await db.conversations.update(conversation, {
       title: titleChanged.newTitle,
     });
   }
 
-  if (
-    XMTP.ContentTypeGroupChatMemberAdded.sameAs(
-      message.contentType as XMTP.ContentTypeId
-    )
-  ) {
-    const memberAdded: XMTP.GroupChatMemberAdded = message.content;
+  if (XMTP.ContentTypeGroupChatMemberAdded.sameAs(contentType)) {
+    const memberAdded = content as XMTP.GroupChatMemberAdded;
 
     const groupMembers = new Set(conversation.groupMembers);
     groupMembers.add(memberAdded.member);

@@ -10,6 +10,7 @@ import { findConversation } from "./model/conversations";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 import NewConversationView from "./views/NewConversationView.tsx";
 import WalletContext from "./contexts/WalletContext.tsx";
+import ReplyProvider from "./contexts/ReplyContext.tsx";
 
 async function conversationLoader({ params }: any) {
   const conversation = await findConversation(params.conversationTopic);
@@ -36,7 +37,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ClientProvider>
       <WalletContext>
-        <RouterProvider router={router} />
+        <ReplyProvider>
+          <RouterProvider router={router} />
+        </ReplyProvider>
       </WalletContext>
     </ClientProvider>
   </React.StrictMode>
