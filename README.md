@@ -31,6 +31,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Functionality
 
+- Performant Database Architecture
 - Group Chat
 - Message Reactions
 - Message Replies
