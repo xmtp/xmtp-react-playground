@@ -15,8 +15,13 @@ export default function ReplyComposer({
   inReplyToMessage: Message;
   dismiss: () => void;
 }): ReactElement {
-  const textField = createRef<HTMLInputElement>();
   const client = useClient()!;
+
+  // We're using an uncontrolled component here because we don't need to update
+  // anything as the user is typing.
+  //
+  // See https://react.dev/learn/manipulating-the-dom-with-refs#best-practices-for-dom-manipulation-with-refs
+  const textField = createRef<HTMLInputElement>();
 
   async function reply(e: FormEvent) {
     e.preventDefault();
