@@ -143,9 +143,8 @@ export default function MessageCellView({
         {shortAddress(message.senderAddress)}:
       </span>
       <div className="ml-2">
-        <Content message={message} />
-        <ReactionsView message={message} />
         <MessageContent message={message} />
+        <ReactionsView message={message} />
         <MessageRepliesView message={message} />
       </div>
     </div>
