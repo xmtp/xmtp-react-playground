@@ -10,7 +10,6 @@ import { findConversation } from "./model/conversations";
 import ConversationViewWithLoader from "./views/ConversationViewWithLoader.tsx";
 import NewConversationView from "./views/NewConversationView.tsx";
 import WalletContext from "./contexts/WalletContext.tsx";
-import ReplyProvider from "./contexts/ReplyContext.tsx";
 
 async function conversationLoader({ params }: any) {
   const conversation = await findConversation(params.conversationTopic);
