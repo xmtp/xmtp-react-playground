@@ -20,6 +20,7 @@ export interface Conversation {
 
 export interface Message {
   id?: number;
+  inReplyToID: string;
   conversationTopic: string;
   xmtpID: string;
   senderAddress: string;
@@ -59,7 +60,7 @@ class DB extends Dexie {
 
   constructor() {
     super("DB");
-    this.version(1).stores({
+    this.version(2).stores({
       conversations: `
         ++id,
         topic,
@@ -72,6 +73,7 @@ class DB extends Dexie {
         `,
       messages: `
         ++id,
+        inReplyToID,
         conversationTopic,
         xmtpID,
         senderAddress,

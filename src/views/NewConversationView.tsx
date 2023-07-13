@@ -10,6 +10,11 @@ import { useClient } from "../hooks/useClient";
 
 export default function NewConversationView(): ReactElement {
   const client = useClient()!;
+
+  // We're using an uncontrolled component here because we don't need to update
+  // anything as the user is typing.
+  //
+  // See https://react.dev/learn/manipulating-the-dom-with-refs#best-practices-for-dom-manipulation-with-refs
   const addressInputRef = createRef<HTMLInputElement>();
 
   const [error, setError] = useState<string | undefined>();

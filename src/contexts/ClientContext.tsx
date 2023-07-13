@@ -4,7 +4,8 @@ import { createContext, useState, ReactElement, useEffect } from "react";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
+import { ReplyCodec } from "@xmtp/content-type-reply";
 import { ReactionCodec } from "../model/reactions";
 
 type ClientContextValue = {
@@ -45,6 +46,7 @@ export default function ClientProvider({
       client.registerCodec(new AttachmentCodec());
       client.registerCodec(new RemoteAttachmentCodec());
       client.registerCodec(new ReactionCodec());
+      client.registerCodec(new ReplyCodec());
 
       setClient(client);
       setIsLoading(false);

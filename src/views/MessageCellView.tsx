@@ -13,11 +13,17 @@ import {
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
-} from "xmtp-content-type-remote-attachment";
+} from "@xmtp/content-type-remote-attachment";
 import { useReactions } from "../hooks/useReactions";
 import ReactionsView from "./ReactionsView";
+import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
+import MessageRepliesView from "./MessageRepliesView";
 
-function ImageAttachmentContent(attachment: MessageAttachment): ReactElement {
+function ImageAttachmentContent({
+  attachment,
+}: {
+  attachment: MessageAttachment;
+}): ReactElement {
   const objectURL = URL.createObjectURL(
     new Blob([Buffer.from(attachment.data)], {
       type: attachment.mimeType,
@@ -36,7 +42,7 @@ function ImageAttachmentContent(attachment: MessageAttachment): ReactElement {
   );
 }
 
-function AttachmentContent(message: Message): ReactElement {
+function AttachmentContent({ message }: { message: Message }): ReactElement {
   const attachment = useAttachment(message);
 
   if (!attachment) {
@@ -44,7 +50,7 @@ function AttachmentContent(message: Message): ReactElement {
   }
 
   if (attachment.mimeType.startsWith("image/")) {
-    return ImageAttachmentContent(attachment);
+    return <ImageAttachmentContent attachment={attachment} />;
   }
 
   return (
@@ -54,22 +60,46 @@ function AttachmentContent(message: Message): ReactElement {
   );
 }
 
-export function Content({ message }: { message: Message }): ReactElement {
-  if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
-    return <span>{message.content}</span>;
+export function Content({
+  content,
+  contentType,
+}: {
+  content: any;
+  contentType: ContentTypeId;
+}): ReactElement {
+  if (ContentTypeText.sameAs(contentType)) {
+    return <span>{content}</span>;
   }
 
+  if (ContentTypeReply.sameAs(contentType)) {
+    const reply: Reply = content;
+    return <Content content={reply.content} contentType={reply.contentType} />;
+  }
+
+  return (
+    <span className="text-zinc-500 break-all">
+      Unknown content: {JSON.stringify(content)}
+    </span>
+  );
+}
+
+export function MessageContent({
+  message,
+}: {
+  message: Message;
+}): ReactElement {
   if (
     ContentTypeAttachment.sameAs(message.contentType as ContentTypeId) ||
     ContentTypeRemoteAttachment.sameAs(message.contentType as ContentTypeId)
   ) {
-    return AttachmentContent(message);
+    return <AttachmentContent message={message} />;
   }
 
   return (
-    <span className="text-zinc-500">
-      Unknown content: {JSON.stringify(message.content)}
-    </span>
+    <Content
+      content={message.content}
+      contentType={message.contentType as ContentTypeId}
+    />
   );
 }
 
@@ -115,6 +145,8 @@ export default function MessageCellView({
       <div className="ml-2">
         <Content message={message} />
         <ReactionsView message={message} />
+        <MessageContent message={message} />
+        <MessageRepliesView message={message} />
       </div>
     </div>
   );
