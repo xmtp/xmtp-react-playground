@@ -1,15 +1,15 @@
 {
-  "name": "xmtp-quickstart",
+  "name": "xmtp-playground",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/xmtp-quickstart-react/",
+    "build": "tsc && vite build --base=/xmtp-react-playground/",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "homepage": "https://xmtp-labs.github.io/xmtp-quickstart-react",
+  "homepage": "https://xmtp.github.io/xmtp-react-playground",
   "dependencies": {
     "@animxyz/core": "^0.6.6",
     "@animxyz/react": "^0.6.7",
