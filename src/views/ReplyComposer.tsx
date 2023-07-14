@@ -56,7 +56,7 @@ export default function ReplyComposer({
       <form className="d-block flex space-x-2" onSubmit={reply}>
         <input
           autoFocus
-          className="p-2 border rounded flex-grow w-96 text-xs"
+          className="p-2 border rounded flex-grow w-96 text-xs dark:text-black"
           ref={textField}
           type="text"
           placeholder={`Reply to ${shortAddress(
