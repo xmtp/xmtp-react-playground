@@ -30,7 +30,7 @@ export async function addReaction(
     action: "added",
     reference: message.xmtpID,
     content: reactionName,
-    schema: "unicode",
+    schema: "shortcode",
   };
 
   const xmtpConversation = await getXMTPConversation(client, conversation);
@@ -70,7 +70,7 @@ export async function removeReaction(
     action: "removed",
     reference: message.xmtpID,
     content: reactionName,
-    schema: "unicode",
+    schema: "shortcode",
   };
 
   const xmtpConversation = await getXMTPConversation(client, conversation);
