@@ -50,7 +50,9 @@ function WalletSetter({
       setWaitingForSignatures(true);
       (async () => {
         try {
-          const client = await Client.create(signer);
+          const client = await Client.create(signer, {
+            env: "dev",
+          });
           client.enableGroupChat();
 
           setClient(client);
