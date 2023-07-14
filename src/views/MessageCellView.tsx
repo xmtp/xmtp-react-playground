@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
@@ -16,6 +16,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 import MessageRepliesView from "./MessageRepliesView";
+import ReactionsView from "./ReactionsView";
 
 function ImageAttachmentContent({
   attachment,
@@ -133,7 +134,7 @@ export default function MessageCellView({
   }
 
   return (
-    <div className="flex mb-1">
+    <div className="flex">
       <span
         title={message.sentByMe ? "You" : message.senderAddress}
         className={message.sentByMe ? "text-zinc-500" : "text-green-500"}
@@ -143,6 +144,7 @@ export default function MessageCellView({
       <div className="ml-2">
         <MessageContent message={message} />
         <MessageRepliesView message={message} />
+        <ReactionsView message={message} />
       </div>
     </div>
   );

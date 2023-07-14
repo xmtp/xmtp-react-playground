@@ -10,7 +10,7 @@ export function useMessages(conversation: Conversation): Message[] | undefined {
   useEffect(() => {
     if (!client) return;
     loadMessages(conversation, client);
-  });
+  }, [client, conversation]);
 
   return useLiveQuery(async () => {
     return await db.messages

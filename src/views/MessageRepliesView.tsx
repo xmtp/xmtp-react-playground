@@ -19,7 +19,7 @@ export default function MessageRepliesView({
       {replies.length > 0 && (
         <div className="mb-2">
           {replies.map((message) => (
-            <div className="flex text-xs space-x-1">
+            <div className="flex text-xs space-x-1" key={message.xmtpID}>
               <span>{shortAddress(message.senderAddress)}:</span>
               <MessageContent message={message} />
             </div>

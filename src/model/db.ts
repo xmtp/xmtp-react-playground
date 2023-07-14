@@ -45,10 +45,18 @@ export interface MessageAttachment {
   data: Uint8Array;
 }
 
+export interface MessageReaction {
+  id?: number;
+  reactor: string;
+  messageXMTPID: string;
+  name: string;
+}
+
 class DB extends Dexie {
   conversations!: Dexie.Table<Conversation, number>;
   messages!: Dexie.Table<Message, number>;
   attachments!: Dexie.Table<MessageAttachment, number>;
+  reactions!: Dexie.Table<MessageReaction, number>;
 
   constructor() {
     super("DB");
@@ -65,6 +73,7 @@ class DB extends Dexie {
         `,
       messages: `
         ++id,
+        [conversationTopic+inReplyToID],
         inReplyToID,
         conversationTopic,
         xmtpID,
@@ -80,6 +89,13 @@ class DB extends Dexie {
         filename,
         mimeType,
         data
+      `,
+      reactions: `
+        ++id,
+        [messageXMTPID+reactor+name],
+        messageXMTPID,
+        reactor,
+        name
       `,
     });
   }
