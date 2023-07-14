@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
@@ -134,7 +134,7 @@ export default function MessageCellView({
   }
 
   return (
-    <div className="flex mb-1">
+    <div className="flex">
       <span
         title={message.sentByMe ? "You" : message.senderAddress}
         className={message.sentByMe ? "text-zinc-500" : "text-green-500"}
