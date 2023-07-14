@@ -1,10 +1,37 @@
-import { Client } from "@xmtp/xmtp-js";
+import { Client, ContentTypeId, ContentTypeText } from "@xmtp/xmtp-js";
 import db, { Message, MessageReaction } from "./db";
 import { findConversation, getXMTPConversation } from "./conversations";
 import { Mutex } from "async-mutex";
 import { ContentTypeReaction, Reaction } from "@xmtp/content-type-reaction";
+import { shortAddress } from "../util/shortAddress";
+import {
+  ContentTypeAttachment,
+  ContentTypeRemoteAttachment,
+} from "@xmtp/content-type-remote-attachment";
+import { ContentTypeReply } from "@xmtp/content-type-reply";
 
 const reactionMutex = new Mutex();
+
+const getReactionTo = (message: Message) => {
+  let reactionTo = " ";
+
+  if (
+    ContentTypeAttachment.sameAs(message.contentType as ContentTypeId) ||
+    ContentTypeRemoteAttachment.sameAs(message.contentType as ContentTypeId)
+  ) {
+    reactionTo = "to an attachment ";
+  }
+
+  if (ContentTypeReply.sameAs(message.contentType as ContentTypeId)) {
+    reactionTo = "to a reply ";
+  }
+
+  if (ContentTypeText.sameAs(message.contentType as ContentTypeId)) {
+    reactionTo = `to "${message.content}" `;
+  }
+
+  return reactionTo;
+};
 
 export async function addReaction(
   reactionName: string,
@@ -36,6 +63,9 @@ export async function addReaction(
   const xmtpConversation = await getXMTPConversation(client, conversation);
   await xmtpConversation.send(reaction, {
     contentType: ContentTypeReaction,
+    contentFallback: `${shortAddress(client.address)} reacted ${getReactionTo(
+      message
+    )}with ${reaction.content}`,
   });
 }
 
@@ -76,6 +106,9 @@ export async function removeReaction(
   const xmtpConversation = await getXMTPConversation(client, conversation);
   await xmtpConversation.send(reaction, {
     contentType: ContentTypeReaction,
+    contentFallback: `${shortAddress(client.address)} unreacted ${getReactionTo(
+      message
+    )}with ${reaction.content}`,
   });
 }
 
