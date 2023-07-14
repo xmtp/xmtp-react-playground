@@ -13,7 +13,7 @@ import { ContentTypeReply } from "@xmtp/content-type-reply";
 const reactionMutex = new Mutex();
 
 const getReactionTo = (message: Message) => {
-  let reactionTo = " ";
+  let reactionTo = "";
 
   if (
     ContentTypeAttachment.sameAs(message.contentType as ContentTypeId) ||
