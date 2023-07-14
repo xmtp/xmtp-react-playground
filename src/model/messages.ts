@@ -40,6 +40,7 @@ export async function sendMessage(
     id: message.id,
     content,
     contentType,
+    senderAddress: message.senderAddress,
   });
 
   // process reply content as message
@@ -49,6 +50,7 @@ export async function sendMessage(
       id: message.id,
       content: replyContent.content,
       contentType: replyContent.contentType,
+      senderAddress: message.senderAddress,
     });
   }
 
@@ -127,6 +129,7 @@ export async function saveMessage(
       id: message.id,
       content: decodedMessage.content,
       contentType: decodedMessage.contentType,
+      senderAddress: message.senderAddress,
     });
 
     // process reply content as message
@@ -136,6 +139,7 @@ export async function saveMessage(
         id: message.id,
         content: replyContent.content,
         contentType: replyContent.contentType,
+        senderAddress: message.senderAddress,
       });
     }
 

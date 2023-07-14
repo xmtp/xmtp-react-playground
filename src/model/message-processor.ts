@@ -8,7 +8,8 @@ import {
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
-import { ContentTypeReaction, Reaction, persistReaction } from "./reactions";
+import { deleteReaction, persistReaction } from "./reactions";
+import { ContentTypeReaction, Reaction } from "@xmtp/content-type-reaction";
 
 export async function process(
   client: XMTP.Client,
@@ -17,6 +18,7 @@ export async function process(
     id: number;
     content: any;
     contentType: XMTP.ContentTypeId;
+    senderAddress: string;
   }
 ) {
   const { content, contentType, id: messageID } = message;

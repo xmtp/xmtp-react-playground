@@ -14,11 +14,8 @@ import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
-import { useReactions } from "../hooks/useReactions";
-import ReactionsView from "./ReactionsView";
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 import MessageRepliesView from "./MessageRepliesView";
-import { useReactions } from "../hooks/useReactions";
 import ReactionsView from "./ReactionsView";
 
 function ImageAttachmentContent({
@@ -146,7 +143,6 @@ export default function MessageCellView({
       </span>
       <div className="ml-2">
         <MessageContent message={message} />
-        <ReactionsView message={message} />
         <MessageRepliesView message={message} />
         <ReactionsView message={message} />
       </div>

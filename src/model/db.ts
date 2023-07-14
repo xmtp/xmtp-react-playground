@@ -73,6 +73,7 @@ class DB extends Dexie {
         `,
       messages: `
         ++id,
+        [conversationTopic+inReplyToID],
         inReplyToID,
         conversationTopic,
         xmtpID,
@@ -91,6 +92,7 @@ class DB extends Dexie {
       `,
       reactions: `
         ++id,
+        [messageXMTPID+reactor+name],
         messageXMTPID,
         reactor,
         name

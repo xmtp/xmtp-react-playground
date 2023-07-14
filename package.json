@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build --base=/xmtp-react-playground/",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "homepage": "https://xmtp.github.io/xmtp-react-playground",
   "dependencies": {
@@ -15,6 +16,7 @@
     "@animxyz/react": "^0.6.7",
     "@heroicons/react": "^2.0.18",
     "@rainbow-me/rainbowkit": "^0.10.0",
+    "@xmtp/content-type-reaction": "^1.0.0",
     "@xmtp/content-type-remote-attachment": "^1.0.7",
     "@xmtp/content-type-reply": "^1.0.0",
     "@xmtp/xmtp-js": "^9.4.0-beta.1",
@@ -31,8 +33,7 @@
     "react-router-dom": "^6.13.0",
     "react-time-ago": "^7.2.1",
     "wagmi": "^0.10.0",
-    "web3.storage": "^4.5.4",
-    "xmtp-content-type-remote-attachment": "^1.0.7"
+    "web3.storage": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",

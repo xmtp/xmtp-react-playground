@@ -6,7 +6,7 @@ import {
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import { ReplyCodec } from "@xmtp/content-type-reply";
-import { ReactionCodec } from "../model/reactions";
+import { ReactionCodec } from "@xmtp/content-type-reaction";
 
 export function useClient() {
   return useContext(ClientContext).client;
@@ -19,7 +19,6 @@ export function useSetClient() {
     if (client) {
       client.registerCodec(new AttachmentCodec());
       client.registerCodec(new RemoteAttachmentCodec());
-      client.registerCodec(new ReactionCodec());
       client.registerCodec(new ReplyCodec());
       client.registerCodec(new ReactionCodec());
       client.enableGroupChat();

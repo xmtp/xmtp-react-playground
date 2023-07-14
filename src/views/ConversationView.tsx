@@ -8,8 +8,8 @@ import Header from "../components/Header";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useLiveConversation } from "../hooks/useLiveConversation";
 import ConversationSettingsView from "./ConversationSettingsView";
-import { ContentTypeReaction } from "../model/reactions";
 import { ContentTypeId } from "@xmtp/xmtp-js";
+import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 const appearsInMessageList = (message: Message): boolean => {
   if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
