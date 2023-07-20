@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
-import db, { Conversation, Message } from "../model/db";
+import { Conversation, Message } from "../model/db";
 import { useMessages } from "../hooks/useMessages";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
@@ -10,6 +10,7 @@ import { useLiveConversation } from "../hooks/useLiveConversation";
 import ConversationSettingsView from "./ConversationSettingsView";
 import { ContentTypeId } from "@xmtp/xmtp-js";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
+import { useReadReceipts } from "../hooks/useReadReceipts";
 
 const appearsInMessageList = (message: Message): boolean => {
   if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
@@ -24,13 +25,27 @@ export default function ConversationView({
 }: {
   conversation: Conversation;
 }): ReactElement {
-  const messages = useMessages(conversation);
   const liveConversation = useLiveConversation(conversation);
+
+  // Includes read receipts
+  const unfilteredMessages = useMessages(conversation);
+
+  // Filters out read receipts
+  const filteredMessages = unfilteredMessages?.filter(
+    (item) => item.contentType.typeId !== "readReceipt"
+  );
+
+  const { showReadReceipt, readReceiptError } = useReadReceipts(
+    filteredMessages,
+    unfilteredMessages,
+    conversation
+  );
+
   const [isShowingSettings, setIsShowingSettings] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 100000, behavior: "smooth" });
-  }, [messages?.length]);
+  }, [unfilteredMessages?.length]);
 
   return (
     <div className="p-4 pb-20 pt-14">
@@ -62,17 +77,34 @@ export default function ConversationView({
         )}
       </Header>
       <div>
-        {messages?.length == 0 && <p>No messages yet.</p>}
-        {messages ? (
-          messages.reduce((acc: ReactElement[], message: Message) => {
-            if (appearsInMessageList(message)) {
-              acc.push(
-                <MessageCellView key={message.xmtpID} message={message} />
-              );
-            }
+        {filteredMessages?.length == 0 && <p>No messages yet.</p>}
+        {filteredMessages ? (
+          filteredMessages.reduce(
+            (acc: ReactElement[], message: Message, index) => {
+              const showRead =
+                showReadReceipt && index === filteredMessages.length - 1;
+              const showError =
+                readReceiptError && index === filteredMessages.length - 1;
+              if (appearsInMessageList(message)) {
+                acc.push(
+                  <MessageCellView
+                    key={message.id}
+                    message={message}
+                    readReceiptText={
+                      showRead
+                        ? "Read"
+                        : showError
+                        ? "Error sending read receipt"
+                        : undefined
+                    }
+                  />
+                );
+              }
 
-            return acc;
-          }, [] as ReactElement[])
+              return acc;
+            },
+            [] as ReactElement[]
+          )
         ) : (
           <span>Could not load messages</span>
         )}

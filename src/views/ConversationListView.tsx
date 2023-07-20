@@ -8,7 +8,7 @@ import ConversationCellView from "./ConversationCellView";
 export default function ConversationListView(): ReactElement {
   const client = useClient();
   const conversations = useConversations(client);
-  const latestMesssages = useLatestMessages(conversations);
+  const latestMessages = useLatestMessages(conversations);
 
   return (
     <div>
@@ -18,7 +18,7 @@ export default function ConversationListView(): ReactElement {
             <Link to={`c/${conversation.topic}`} key={conversation.topic}>
               <ConversationCellView
                 conversation={conversation}
-                latestMessage={latestMesssages[i]}
+                latestMessage={latestMessages[i]}
               />
             </Link>
           ))

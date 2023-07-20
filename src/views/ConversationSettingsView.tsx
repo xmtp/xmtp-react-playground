@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Conversation } from "../model/db";
 import { XyzTransition } from "@animxyz/react";
 import GroupSettingsView from "./GroupSettingsView";
@@ -10,6 +10,8 @@ export default function ConversationSettingsView({
   conversation: Conversation;
   dismiss: () => void;
 }): ReactElement {
+  const [isReadReceiptsEnabled, setIsReadReceiptsEnabled] = useState(false);
+
   const summary = conversation.isGroup ? (
     <p>This is a group conversation.</p>
   ) : (
@@ -22,8 +24,18 @@ export default function ConversationSettingsView({
         <h3>Conversation Info</h3>
         {summary}
 
-        {conversation.isGroup && (
+        {conversation.isGroup ? (
           <GroupSettingsView conversation={conversation} dismiss={dismiss} />
+        ) : (
+          <button
+            onClick={() => setIsReadReceiptsEnabled(!isReadReceiptsEnabled)}
+            className="bg-blue-100 p-2"
+            id={`read-receipt-${isReadReceiptsEnabled}`}
+          >
+            {isReadReceiptsEnabled
+              ? "Disable Read Receipts"
+              : "Enable Read Receipts"}
+          </button>
         )}
       </div>
     </XyzTransition>
