@@ -24,7 +24,8 @@ export function useReadReceipts(
 
   useEffect(() => {
     setReadReceiptError(false);
-    const enabledButton = document.getElementById("read-receipt-true");
+    const enabledButton =
+      window.localStorage.getItem("readReceiptsEnabled") === "true";
     if (
       isMostRecentMessageFromSelf &&
       isMostRecentMessageReadReceipt &&
