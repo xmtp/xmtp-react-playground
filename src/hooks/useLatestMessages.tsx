@@ -12,7 +12,6 @@ export function useLatestMessages(
             await db.messages
               .where("conversationTopic")
               .equals(conversation.topic)
-              .and((msg) => msg.contentType.typeId !== "readReceipt")
               .reverse()
               .sortBy("sentAt")
           )[0];

@@ -1,59 +1,56 @@
-import { Conversation, Message } from "../model/db";
+import db, { Conversation } from "../model/db";
 import { useClient } from "./useClient";
 import { useEffect, useState } from "react";
 import { sendMessage } from "../model/messages";
 import { Client } from "@xmtp/xmtp-js";
 import { ContentTypeReadReceipt } from "@xmtp/content-type-read-receipt";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useMessages } from "./useMessages";
 
-export function useReadReceipts(
-  filteredMessages: Array<Message> | undefined,
-  unfilteredMessages: Array<Message> | undefined,
-  conversation: Conversation
-): { showReadReceipt: boolean; readReceiptError: boolean } {
+export function useReadReceipts(conversation: Conversation) {
   const client = useClient();
   const [readReceiptError, setReadReceiptError] = useState(false);
   const [showReadReceipt, setShowReadReceipt] = useState(true);
+  const messages = useMessages(conversation) || [];
 
-  const isMostRecentMessageFromSelf =
-    filteredMessages?.[filteredMessages.length - 1]?.senderAddress ===
-    client?.address;
+  const isMostRecentMessageFromSelf = messages[messages.length - 1]?.sentByMe;
+  const lastMessageTimestamp = messages[messages.length - 1]?.sentAt;
 
-  const isMostRecentMessageReadReceipt =
-    unfilteredMessages?.[unfilteredMessages.length - 1]?.contentType.typeId ===
-    "readReceipt";
+  const readReceiptsEnabled =
+    window.localStorage.getItem("readReceiptsEnabled") === "true";
 
   useEffect(() => {
+    setShowReadReceipt(false);
+  }, [messages]);
+
+  useLiveQuery(async () => {
     setReadReceiptError(false);
-    const enabledButton =
-      window.localStorage.getItem("readReceiptsEnabled") === "true";
-    if (
-      isMostRecentMessageFromSelf &&
-      isMostRecentMessageReadReceipt &&
-      enabledButton
-    ) {
-      setShowReadReceipt(true);
-    } else if (
-      !isMostRecentMessageFromSelf &&
-      !isMostRecentMessageReadReceipt
-    ) {
-      void sendMessage(
-        client as Client,
-        conversation,
-        {
-          timestamp: new Date().toISOString(),
-        },
-        ContentTypeReadReceipt
-      );
-    } else if (showReadReceipt) {
-      setShowReadReceipt(false);
-    }
-  }, [
-    isMostRecentMessageFromSelf,
-    isMostRecentMessageReadReceipt,
-    showReadReceipt,
-    conversation,
-    client,
-  ]);
+    setShowReadReceipt(false);
+    return await db.readReceipts
+      .get({ peerAddress: conversation.peerAddress })
+      .then(async (message) => {
+        const isMostRecentMessageReadReceipt =
+          lastMessageTimestamp < new Date(message?.timestamp as string);
+        if (isMostRecentMessageFromSelf && isMostRecentMessageReadReceipt) {
+          setShowReadReceipt(true);
+        } else if (
+          isMostRecentMessageFromSelf === false &&
+          isMostRecentMessageReadReceipt === false &&
+          readReceiptsEnabled
+        ) {
+          void sendMessage(
+            client as Client,
+            conversation,
+            {
+              timestamp: new Date().toISOString(),
+            },
+            ContentTypeReadReceipt
+          );
+        } else if (showReadReceipt) {
+          setShowReadReceipt(false);
+        }
+      });
+  }, [messages]);
 
   return {
     showReadReceipt,

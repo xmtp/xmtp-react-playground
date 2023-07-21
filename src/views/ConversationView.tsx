@@ -27,25 +27,15 @@ export default function ConversationView({
 }): ReactElement {
   const liveConversation = useLiveConversation(conversation);
 
-  // Includes read receipts
-  const unfilteredMessages = useMessages(conversation);
+  const messages = useMessages(conversation);
 
-  // Filters out read receipts
-  const filteredMessages = unfilteredMessages?.filter(
-    (item) => item.contentType.typeId !== "readReceipt"
-  );
-
-  const { showReadReceipt, readReceiptError } = useReadReceipts(
-    filteredMessages,
-    unfilteredMessages,
-    conversation
-  );
+  const { showReadReceipt, readReceiptError } = useReadReceipts(conversation);
 
   const [isShowingSettings, setIsShowingSettings] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 100000, behavior: "smooth" });
-  }, [unfilteredMessages?.length]);
+  }, [messages?.length]);
 
   return (
     <div className="p-4 pb-20 pt-14">
@@ -77,34 +67,29 @@ export default function ConversationView({
         )}
       </Header>
       <div>
-        {filteredMessages?.length == 0 && <p>No messages yet.</p>}
-        {filteredMessages ? (
-          filteredMessages.reduce(
-            (acc: ReactElement[], message: Message, index) => {
-              const showRead =
-                showReadReceipt && index === filteredMessages.length - 1;
-              const showError =
-                readReceiptError && index === filteredMessages.length - 1;
-              if (appearsInMessageList(message)) {
-                acc.push(
-                  <MessageCellView
-                    key={message.id}
-                    message={message}
-                    readReceiptText={
-                      showRead
-                        ? "Read"
-                        : showError
-                        ? "Error sending read receipt"
-                        : undefined
-                    }
-                  />
-                );
-              }
+        {messages?.length == 0 && <p>No messages yet.</p>}
+        {messages ? (
+          messages.reduce((acc: ReactElement[], message: Message, index) => {
+            const showRead = showReadReceipt && index === messages.length - 1;
+            const showError = readReceiptError && index === messages.length - 1;
+            if (appearsInMessageList(message)) {
+              acc.push(
+                <MessageCellView
+                  key={message.id}
+                  message={message}
+                  readReceiptText={
+                    showRead
+                      ? "Read"
+                      : showError
+                      ? "Error sending read receipt"
+                      : undefined
+                  }
+                />
+              );
+            }
 
-              return acc;
-            },
-            [] as ReactElement[]
-          )
+            return acc;
+          }, [] as ReactElement[])
         ) : (
           <span>Could not load messages</span>
         )}
