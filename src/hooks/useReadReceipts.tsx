@@ -40,6 +40,7 @@ export function useReadReceipts(conversation: Conversation) {
           },
           ContentTypeReadReceipt
         );
+        return false;
       } else {
         return false;
       }
