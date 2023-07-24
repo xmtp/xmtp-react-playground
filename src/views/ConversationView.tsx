@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
-import db, { Conversation, Message } from "../model/db";
+import { Conversation, Message } from "../model/db";
 import { useMessages } from "../hooks/useMessages";
 import MessageComposerView from "./MessageComposerView";
 import MessageCellView from "./MessageCellView";
@@ -10,6 +10,7 @@ import { useLiveConversation } from "../hooks/useLiveConversation";
 import ConversationSettingsView from "./ConversationSettingsView";
 import { ContentTypeId } from "@xmtp/xmtp-js";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
+import { useReadReceipts } from "../hooks/useReadReceipts";
 
 const appearsInMessageList = (message: Message): boolean => {
   if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
@@ -24,8 +25,12 @@ export default function ConversationView({
 }: {
   conversation: Conversation;
 }): ReactElement {
-  const messages = useMessages(conversation);
   const liveConversation = useLiveConversation(conversation);
+
+  const messages = useMessages(conversation);
+
+  const showReadReceipt = useReadReceipts(conversation);
+
   const [isShowingSettings, setIsShowingSettings] = useState(false);
 
   useEffect(() => {
@@ -64,10 +69,15 @@ export default function ConversationView({
       <div>
         {messages?.length == 0 && <p>No messages yet.</p>}
         {messages ? (
-          messages.reduce((acc: ReactElement[], message: Message) => {
+          messages.reduce((acc: ReactElement[], message: Message, index) => {
+            const showRead = showReadReceipt && index === messages.length - 1;
             if (appearsInMessageList(message)) {
               acc.push(
-                <MessageCellView key={message.xmtpID} message={message} />
+                <MessageCellView
+                  key={message.id}
+                  message={message}
+                  readReceiptText={showRead ? "Read" : undefined}
+                />
               );
             }
 
