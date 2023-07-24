@@ -29,7 +29,7 @@ export default function ConversationView({
 
   const messages = useMessages(conversation);
 
-  const { showReadReceipt, readReceiptError } = useReadReceipts(conversation);
+  const showReadReceipt = useReadReceipts(conversation);
 
   const [isShowingSettings, setIsShowingSettings] = useState(false);
 
@@ -71,19 +71,12 @@ export default function ConversationView({
         {messages ? (
           messages.reduce((acc: ReactElement[], message: Message, index) => {
             const showRead = showReadReceipt && index === messages.length - 1;
-            const showError = readReceiptError && index === messages.length - 1;
             if (appearsInMessageList(message)) {
               acc.push(
                 <MessageCellView
                   key={message.id}
                   message={message}
-                  readReceiptText={
-                    showRead
-                      ? "Read"
-                      : showError
-                      ? "Error sending read receipt"
-                      : undefined
-                  }
+                  readReceiptText={showRead ? "Read" : undefined}
                 />
               );
             }

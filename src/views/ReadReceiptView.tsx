@@ -6,13 +6,7 @@ export default function ReadReceiptView({
   readReceiptText: string | undefined;
 }): ReactElement {
   return readReceiptText ? (
-    <span
-      className={`text-xs ${
-        readReceiptText === "Read" ? "text-gray-400" : "text-red-400"
-      }`}
-    >
-      {readReceiptText}
-    </span>
+    <span className="text-xs text-gray-400">{readReceiptText}</span>
   ) : (
     <></>
   );
