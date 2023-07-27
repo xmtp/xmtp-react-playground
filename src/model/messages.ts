@@ -68,11 +68,12 @@ export async function sendMessage(
       }
     }
 
+    const xmtpConversation = await getXMTPConversation(client, conversation);
+    const decodedMessage = await xmtpConversation.send(content, {
+      contentType,
+    });
+
     if (message.contentType.typeId !== "readReceipt") {
-      const xmtpConversation = await getXMTPConversation(client, conversation);
-      const decodedMessage = await xmtpConversation.send(content, {
-        contentType,
-      });
       await db.messages.update(message.id!, {
         xmtpID: decodedMessage.id,
         sentAt: decodedMessage.sent,
