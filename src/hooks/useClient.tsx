@@ -24,7 +24,7 @@ export function useSetClient() {
       client.registerCodec(new ReactionCodec());
       client.registerCodec(new ReadReceiptCodec());
 
-      client.enableGroupChat();
+      // client.enableGroupChat();
     }
 
     setClient(client);

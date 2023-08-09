@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import { Conversation } from "../model/db";
 import { XyzTransition } from "@animxyz/react";
-import GroupSettingsView from "./GroupSettingsView";
+// import GroupSettingsView from "./GroupSettingsView";
 
 export default function ConversationSettingsView({
   conversation,
@@ -22,9 +22,9 @@ export default function ConversationSettingsView({
         <h3>Conversation Info</h3>
         {summary}
 
-        {conversation.isGroup && (
+        {/* {conversation.isGroup && (
           <GroupSettingsView conversation={conversation} dismiss={dismiss} />
-        )}
+        )} */}
       </div>
     </XyzTransition>
   );

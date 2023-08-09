@@ -63,16 +63,16 @@ export async function startConversation(
   return await saveConversation(xmtpConversation);
 }
 
-export async function startGroupConversation(
-  client: XMTP.Client,
-  addresses: string[]
-): Promise<Conversation> {
-  const xmtpConversation = await client.conversations.newGroupConversation(
-    addresses
-  );
+// export async function startGroupConversation(
+//   client: XMTP.Client,
+//   addresses: string[]
+// ): Promise<Conversation> {
+//   const xmtpConversation = await client.conversations.newGroupConversation(
+//     addresses
+//   );
 
-  return await saveConversation(xmtpConversation);
-}
+//   return await saveConversation(xmtpConversation);
+// }
 
 export async function saveConversation(
   xmtpConversation: XMTP.Conversation
@@ -92,7 +92,8 @@ export async function saveConversation(
       title: undefined,
       createdAt: xmtpConversation.createdAt,
       updatedAt: xmtpConversation.createdAt,
-      isGroup: xmtpConversation.isGroup,
+      // isGroup: xmtpConversation.isGroup,
+      isGroup: false,
       peerAddress: xmtpConversation.peerAddress,
     };
 
@@ -101,12 +102,12 @@ export async function saveConversation(
       xmtpConversation.context?.metadata.initialMembers || ""
     ).split(",");
 
-    if (groupMembers.length > 1) {
-      conversation.isGroup = true;
-      conversation.groupMembers = groupMembers;
-    } else {
-      conversation.isGroup = false;
-    }
+    // if (groupMembers.length > 1) {
+    //   conversation.isGroup = true;
+    //   conversation.groupMembers = groupMembers;
+    // } else {
+    //   conversation.isGroup = false;
+    // }
 
     conversation.id = await db.conversations.add(conversation);
 

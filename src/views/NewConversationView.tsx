@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import {
   startConversation,
-  startGroupConversation,
+  // startGroupConversation,
 } from "../model/conversations";
 import { useClient } from "../hooks/useClient";
 
@@ -53,12 +53,12 @@ export default function NewConversationView(): ReactElement {
         setError(String(e));
       }
     } else {
-      try {
-        const conversation = await startGroupConversation(client, addresses);
-        navigate(`/c/${conversation.topic}`);
-      } catch (e) {
-        setError(String(e));
-      }
+      // try {
+      //   const conversation = await startGroupConversation(client, addresses);
+      //   navigate(`/c/${conversation.topic}`);
+      // } catch (e) {
+      //   setError(String(e));
+      // }
     }
   }
 
