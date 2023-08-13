@@ -5,7 +5,6 @@ import {
   createClient,
   WagmiConfig,
   useSigner,
-  useAccount,
   useDisconnect,
 } from "wagmi";
 import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
@@ -15,11 +14,15 @@ import { Client } from "@xmtp/xmtp-js";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet, polygon, optimism, arbitrum],
-  [publicProvider()]
+  [
+    publicProvider()
+  ]
+
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "XMTP Inbox",
+  appName: "Scrib",
+  projectId: import.meta.env.VITE_WALLETCONNECT_ID,
   chains,
 });
 
