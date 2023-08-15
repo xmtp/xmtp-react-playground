@@ -16,7 +16,7 @@ export default function LoginView(): ReactElement {
   async function generateWallet() {
     const wallet = Wallet.createRandom();
     const client = await Client.create(wallet, {
-      env: "dev",
+      env: import.meta.env.VITE_XMTP_ENV,
     });
 
     // Don't do this in real life.

@@ -54,7 +54,7 @@ function WalletSetter({
       (async () => {
         try {
           const client = await Client.create(signer, {
-            env: "dev",
+            env: import.meta.env.VITE_XMTP_ENV,
           });
           // client.enableGroupChat();
 

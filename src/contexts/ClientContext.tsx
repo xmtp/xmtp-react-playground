@@ -40,7 +40,7 @@ export default function ClientProvider({
 
       const wallet = new Wallet(insecurePrivateKey);
       const client = await Client.create(wallet, {
-        env: "dev",
+        env: import.meta.env.VITE_XMTP_ENV,
       });
 
       // client.enableGroupChat();
