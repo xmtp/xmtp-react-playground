@@ -5,7 +5,6 @@ Use the XMTP React playground app as a tool to help you build your own app with 
 Built with React and the [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js), the playground provides the following functionality that you can use as a foundation for your app:
 
 - Performant [database architecture](https://xmtp.org/docs/tutorials/performance#use-a-local-cache)
-- Group chat
 - Message reactions
 - Message replies
 - [Attachments](https://xmtp.org/docs/build/attachments)
@@ -17,7 +16,7 @@ The playground's visual design is intentionally limited to help make the code ea
 The playground has not undergone a formal security audit.
 
 > **Note**  
-> You might also be interested in our Vue playground: Coming soon 
+> You might also be interested in our Vue playground: Coming soon
 
 ## Install the package
 

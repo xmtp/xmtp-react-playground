@@ -2,14 +2,7 @@ import { ReactElement, useState } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
-import {
-  ContentTypeGroupChatMemberAdded,
-  ContentTypeGroupChatTitleChanged,
-  ContentTypeId,
-  ContentTypeText,
-  GroupChatMemberAdded,
-  GroupChatTitleChanged,
-} from "@xmtp/xmtp-js";
+import { ContentTypeId, ContentTypeText } from "@xmtp/xmtp-js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -107,32 +100,6 @@ export default function MessageCellView({
 }: {
   message: Message;
 }): ReactElement {
-  if (
-    ContentTypeGroupChatTitleChanged.sameAs(
-      message.contentType as ContentTypeId
-    )
-  ) {
-    const titleChanged: GroupChatTitleChanged = message.content;
-    return (
-      <div className="text-zinc-500 mb-1">
-        {shortAddress(message.senderAddress)} changed the group title to{" "}
-        <b>{titleChanged.newTitle}</b>
-      </div>
-    );
-  }
-
-  if (
-    ContentTypeGroupChatMemberAdded.sameAs(message.contentType as ContentTypeId)
-  ) {
-    const memberAdded: GroupChatMemberAdded = message.content;
-    return (
-      <div className="text-zinc-500 mb-1">
-        {shortAddress(message.senderAddress)} added <b>{memberAdded.member}</b>{" "}
-        to the group
-      </div>
-    );
-  }
-
   return (
     <div className="flex">
       <span

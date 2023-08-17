@@ -55,25 +55,6 @@ export async function process(
     await db.attachments.add(messageAttachment);
   }
 
-  if (XMTP.ContentTypeGroupChatTitleChanged.sameAs(contentType)) {
-    const titleChanged = content as XMTP.GroupChatTitleChanged;
-
-    await db.conversations.update(conversation, {
-      title: titleChanged.newTitle,
-    });
-  }
-
-  if (XMTP.ContentTypeGroupChatMemberAdded.sameAs(contentType)) {
-    const memberAdded = content as XMTP.GroupChatMemberAdded;
-
-    const groupMembers = new Set(conversation.groupMembers);
-    groupMembers.add(memberAdded.member);
-
-    await db.conversations.update(conversation, {
-      groupMembers: Array.from(groupMembers),
-    });
-  }
-
   if (ContentTypeReaction.sameAs(message.contentType as XMTP.ContentTypeId)) {
     const reaction: Reaction = message.content;
 

@@ -18,9 +18,6 @@ export default function ConversationCellView({
           <span className="text-blue-700 dark:text-blue-500">
             {conversation.title || shortAddress(conversation.peerAddress)}
           </span>{" "}
-          <span className="text-xs text-zinc-600 font-bold dark:bg-zinc-800 bg-zinc-200 rounded p-0.5">
-            {conversation.isGroup ? "Group Chat" : "1:1"}
-          </span>
         </div>
         <div className="text-xs text-zinc-500">
           <ReactTimeAgo date={conversation.updatedAt} />

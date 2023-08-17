@@ -63,17 +63,6 @@ export async function startConversation(
   return await saveConversation(xmtpConversation);
 }
 
-export async function startGroupConversation(
-  client: XMTP.Client,
-  addresses: string[]
-): Promise<Conversation> {
-  const xmtpConversation = await client.conversations.newGroupConversation(
-    addresses
-  );
-
-  return await saveConversation(xmtpConversation);
-}
-
 export async function saveConversation(
   xmtpConversation: XMTP.Conversation
 ): Promise<Conversation> {
@@ -92,21 +81,8 @@ export async function saveConversation(
       title: undefined,
       createdAt: xmtpConversation.createdAt,
       updatedAt: xmtpConversation.createdAt,
-      isGroup: xmtpConversation.isGroup,
       peerAddress: xmtpConversation.peerAddress,
     };
-
-    // TODO: Conversations streaming in don't have isGroup set properly
-    const groupMembers = (
-      xmtpConversation.context?.metadata.initialMembers || ""
-    ).split(",");
-
-    if (groupMembers.length > 1) {
-      conversation.isGroup = true;
-      conversation.groupMembers = groupMembers;
-    } else {
-      conversation.isGroup = false;
-    }
 
     conversation.id = await db.conversations.add(conversation);
 

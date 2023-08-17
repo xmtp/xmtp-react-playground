@@ -21,7 +21,6 @@ export function useSetClient() {
       client.registerCodec(new RemoteAttachmentCodec());
       client.registerCodec(new ReplyCodec());
       client.registerCodec(new ReactionCodec());
-      client.enableGroupChat();
     }
 
     setClient(client);

@@ -13,9 +13,7 @@ export interface Conversation {
   title: string | undefined;
   createdAt: Date;
   updatedAt: Date;
-  isGroup: boolean;
   peerAddress: string;
-  groupMembers?: string[] | undefined;
 }
 
 export interface Message {
@@ -67,8 +65,6 @@ class DB extends Dexie {
         title,
         createdAt,
         updatedAt,
-        isGroup,
-        groupMembers,
         peerAddress
         `,
       messages: `
