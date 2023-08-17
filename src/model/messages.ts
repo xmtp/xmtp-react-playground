@@ -34,23 +34,19 @@ export async function sendMessage(
     isSending: true,
   };
 
-  message.id = await db.messages.add(message);
-
   await process(client, conversation, {
-    id: message.id,
     content,
     contentType,
-    senderAddress: message.senderAddress,
+    message,
   });
 
   // process reply content as message
   if (contentType.sameAs(ContentTypeReply)) {
     const replyContent = content as Reply;
     await process(client, conversation, {
-      id: message.id,
       content: replyContent.content,
       contentType: replyContent.contentType,
-      senderAddress: message.senderAddress,
+      message,
     });
   }
 
@@ -77,11 +73,13 @@ export async function sendMessage(
       contentType,
     });
 
-    await db.messages.update(message.id!, {
-      xmtpID: decodedMessage.id,
-      sentAt: decodedMessage.sent,
-      isSending: false,
-    });
+    if (message.contentType.typeId !== "readReceipt") {
+      await db.messages.update(message.id!, {
+        xmtpID: decodedMessage.id,
+        sentAt: decodedMessage.sent,
+        isSending: false,
+      });
+    }
   })();
 
   return message;
@@ -123,23 +121,19 @@ export async function saveMessage(
       isSending: false,
     };
 
-    message.id = await db.messages.add(message);
-
     await process(client, conversation, {
-      id: message.id,
       content: decodedMessage.content,
       contentType: decodedMessage.contentType,
-      senderAddress: message.senderAddress,
+      message,
     });
 
     // process reply content as message
     if (decodedMessage.contentType.sameAs(ContentTypeReply)) {
       const replyContent = decodedMessage.content as Reply;
       await process(client, conversation, {
-        id: message.id,
         content: replyContent.content,
         contentType: replyContent.contentType,
-        senderAddress: message.senderAddress,
+        message,
       });
     }
 

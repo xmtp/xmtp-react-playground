@@ -7,11 +7,12 @@ Built with React and the [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js),
 - Performant [database architecture](https://xmtp.org/docs/tutorials/performance#use-a-local-cache)
 - Message reactions
 - Message replies
+- Read receipts
 - [Attachments](https://xmtp.org/docs/build/attachments)
   - Images
   - More formats to come
 
-The playground's visual design is intentionally limited to help make the code easier for your to use, customize, and deploy.
+The playground's visual design is intentionally limited to help make the code easier for you to use, customize, and deploy.
 
 The playground has not undergone a formal security audit.
 

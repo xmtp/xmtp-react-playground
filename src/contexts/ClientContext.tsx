@@ -7,6 +7,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
+import { ReadReceiptCodec } from "@xmtp/content-type-read-receipt";
 
 type ClientContextValue = {
   client: Client | null;
@@ -46,6 +47,7 @@ export default function ClientProvider({
       client.registerCodec(new RemoteAttachmentCodec());
       client.registerCodec(new ReplyCodec());
       client.registerCodec(new ReactionCodec());
+      client.registerCodec(new ReadReceiptCodec());
 
       setClient(client);
       setIsLoading(false);

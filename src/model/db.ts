@@ -50,11 +50,17 @@ export interface MessageReaction {
   name: string;
 }
 
+export interface ReadReceipt {
+  peerAddress: string;
+  timestamp: string;
+}
+
 class DB extends Dexie {
   conversations!: Dexie.Table<Conversation, number>;
   messages!: Dexie.Table<Message, number>;
   attachments!: Dexie.Table<MessageAttachment, number>;
   reactions!: Dexie.Table<MessageReaction, number>;
+  readReceipts!: Dexie.Table<ReadReceipt, string>;
 
   constructor() {
     super("DB");
@@ -93,6 +99,10 @@ class DB extends Dexie {
         reactor,
         name
       `,
+      readReceipts: `
+       ++peerAddress,
+       timestamp
+    `,
     });
   }
 }

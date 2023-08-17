@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { Message, MessageAttachment } from "../model/db";
 import { useAttachment } from "../hooks/useAttachment";
 import { shortAddress } from "../util/shortAddress";
@@ -10,6 +10,7 @@ import {
 import { ContentTypeReply, Reply } from "@xmtp/content-type-reply";
 import MessageRepliesView from "./MessageRepliesView";
 import ReactionsView from "./ReactionsView";
+import ReadReceiptView from "./ReadReceiptView";
 
 function ImageAttachmentContent({
   attachment,
@@ -97,8 +98,10 @@ export function MessageContent({
 
 export default function MessageCellView({
   message,
+  readReceiptText,
 }: {
   message: Message;
+  readReceiptText: string | undefined;
 }): ReactElement {
   return (
     <div className="flex">
@@ -112,6 +115,7 @@ export default function MessageCellView({
         <MessageContent message={message} />
         <MessageRepliesView message={message} />
         <ReactionsView message={message} />
+        <ReadReceiptView readReceiptText={readReceiptText} />
       </div>
     </div>
   );
