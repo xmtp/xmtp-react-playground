@@ -8,4 +8,6 @@ export default defineConfig({
     rollupOptions: {},
   },
   plugins: [react()],
+  define: { 'process.env': process.env }
 });
+

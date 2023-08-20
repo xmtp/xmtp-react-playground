@@ -13,7 +13,8 @@ import { useSetClient } from "../hooks/useClient";
 import { Client } from "@xmtp/xmtp-js";
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum],
+  [mainnet],
+  // [polygon, optimism, arbitrum],
   [
     publicProvider()
   ]
