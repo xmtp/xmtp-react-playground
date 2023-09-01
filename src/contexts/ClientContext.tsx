@@ -43,7 +43,6 @@ export default function ClientProvider({
         env: "dev",
       });
 
-      client.enableGroupChat();
       client.registerCodec(new AttachmentCodec());
       client.registerCodec(new RemoteAttachmentCodec());
       client.registerCodec(new ReplyCodec());
