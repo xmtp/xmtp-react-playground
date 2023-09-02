@@ -8,9 +8,7 @@ Built with React and the [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js),
 - Message reactions
 - Message replies
 - Read receipts
-- [Attachments](https://xmtp.org/docs/build/attachments)
-  - Images
-  - More formats to come
+- Attachments
 
 The playground's visual design is intentionally limited to help make the code easier for you to use, customize, and deploy.
 
