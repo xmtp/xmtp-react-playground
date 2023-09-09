@@ -11,6 +11,7 @@ import ConversationSettingsView from "./ConversationSettingsView";
 import { ContentTypeId } from "@xmtp/xmtp-js";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import { useReadReceipts } from "../hooks/useReadReceipts";
+import { UIContext } from "../contexts/UIContext";
 
 const appearsInMessageList = (message: Message): boolean => {
   if (ContentTypeReaction.sameAs(message.contentType as ContentTypeId)) {
@@ -38,34 +39,35 @@ export default function ConversationView({
   }, [messages?.length]);
 
   return (
-    <div className="p-4 pb-20 pt-14">
-      <Header>
-        <div className="flex justify-between font-bold">
-          <span className="flex-grow">
-            {liveConversation?.title || conversation.peerAddress}
-          </span>
-          <div className="space-x-4">
-            <button
-              className="inline-block space-x-1 text-zinc-600"
-              onClick={() => {
-                setIsShowingSettings(!isShowingSettings);
-              }}
-            >
-              <Cog6ToothIcon className="h-4 inline-block align-top" />
-              <span>Settings</span>
-            </button>
-            <Link className="text-blue-700" to="/">
-              Go Back
-            </Link>
+    <div className="p-4 pb-20 pt-0">
+      <div className="w-full">
+        <div className="w-full min-h-[84px] px-5 py-6">
+          <div className="w-full flex justify-center items-center">
+            <div className="flex grow">
+              {liveConversation?.title || conversation.peerAddress}
+            </div>
+            <div className="space-x-4">
+              <button
+                className="inline-block space-x-1 text-zinc-600"
+                onClick={() => {
+                  setIsShowingSettings(!isShowingSettings);
+                }}
+              >
+                <Cog6ToothIcon className="h-4 inline-block align-top" />
+                <span>Settings</span>
+              </button>
+            </div>
           </div>
+
+          {isShowingSettings && (
+            <ConversationSettingsView
+              conversation={conversation}
+              dismiss={() => setIsShowingSettings(false)}
+            />
+          )}
         </div>
-        {isShowingSettings && (
-          <ConversationSettingsView
-            conversation={conversation}
-            dismiss={() => setIsShowingSettings(false)}
-          />
-        )}
-      </Header>
+      </div>
+
       <div>
         {messages?.length == 0 && <p>No messages yet.</p>}
         {messages ? (
@@ -87,7 +89,10 @@ export default function ConversationView({
           <span>Could not load messages</span>
         )}
       </div>
-      <MessageComposerView conversation={conversation} />
+
+      <div className="w-full">
+        <MessageComposerView conversation={conversation} />
+      </div>
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default function NewConversationView(): ReactElement {
 
       try {
         const conversation = await startConversation(client, address);
-        navigate(`/c/${conversation.topic}`);
+        navigate(`/`);
       } catch (e) {
         setError(String(e));
       }
@@ -112,6 +112,7 @@ export default function NewConversationView(): ReactElement {
           <label className="block">
             <span className="block text-xs my-2">
               Who {addresses.length > 0 && "else "}do you want to message with?
+              0x937C0d4a6294cdfa575de17382c7076b579DC176
             </span>
 
             <input
