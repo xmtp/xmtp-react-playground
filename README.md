@@ -1,3 +1,12 @@
+![Status](https://img.shields.io/badge/Deprecated-brown)
+
+> [!CAUTION]
+> This repo is no longer maintained.
+
+The documentation below is provided for historical reference only.
+
+---
+
 # XMTP React playground
 
 Use the XMTP React playground app as a tool to help you build your own app with XMTP.
